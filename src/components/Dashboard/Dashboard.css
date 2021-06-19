@@ -1,0 +1,37 @@
+ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  list-style-type: none;
+}
+
+[data-pka-anchor="avatar"] {
+  height: 32px !important;
+}
+
+header {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.register-modal {
+  margin-right: 8px;
+}
+
+legend {
+  font-size: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+fieldset {
+  margin-bottom: 16px !important;
+}
+
+.bubbly {
+  margin-top: 32px;
+}
