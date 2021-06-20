@@ -81,7 +81,7 @@ function Admin() {
               <>
                 <OverflowMenu>
                   <OverflowMenu.Trigger>...</OverflowMenu.Trigger>
-                  <OverflowMenu.Item onClick={() => updateRole(props.row, 'Core member')}>Update to core member</OverflowMenu.Item>
+                  <OverflowMenu.Item onClick={() => updateRole(props.row, 'Church member')}>Update to Church member</OverflowMenu.Item>
                   <OverflowMenu.Item onClick={() => updateRole(props.row, 'Regular')}>Update to regular</OverflowMenu.Item>
                   <OverflowMenu.Item onClick={() => updateRole(props.row, 'New friend')}>Update to new friend</OverflowMenu.Item>
                 </OverflowMenu>
@@ -102,7 +102,7 @@ function Admin() {
               </NotificationCard.Image>
               <NotificationCard.Header level={2}>Sorry you do not have the correct permissions to view this page.</NotificationCard.Header>
               <NotificationCard.Body>
-                Only core members are allowed to view the admin page
+                Only Church members are allowed to view the admin page
               </NotificationCard.Body>
             </NotificationCard>}
     </div>

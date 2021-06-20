@@ -24,7 +24,6 @@ const SignUp = () => {
   const [pw, setPw] = useState(null);
   const [confirmPw, setConfirmPw] = useState(null);
   const [error, setError] = useState(false);
-  const [formError, setFormError] = useState(false);
 
   function checkPassword() {
     if(pw) {

@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import SignUp from "./components/SignUp";
 import Admin from "./components/Admin";
+import Report from "./components/Report";
 import { AuthProvider } from "./components/Auth/Auth";
 
 import './App.css';
@@ -17,6 +18,7 @@ const App = () => {
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/admin_hidden_link" component={Admin} />
+          <Route exact path="/report" component={Report} />
         </Switch>
       </Router>
     </AuthProvider>

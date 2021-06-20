@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { Fieldset } from "@paprika/form-element";
 import Avatar from "@paprika/avatar";
 import { getAvatarColors, getInitialsFromText } from '@paprika/avatar/lib/helpers';
@@ -19,11 +19,12 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
 
+import { getNextTuesday, getNextTuesdayReadable } from "../../helpers/getDate";
 import './Dashboard.css';
 
 const { Label, Content } = Fieldset;
 
-const MAX_PEOPLE = 12;
+const MAX_PEOPLE = 16;
 
 const db = firebase.firestore();
 const batch = db.batch();
@@ -65,8 +66,6 @@ const Dashboard = () => {
   const [isOpenToast, setOpenToast] = React.useState({ open: false, message: '', kind: 'success' });
   
   const userFirebase = firebase.auth().currentUser;
-  
-  let history = useHistory();
 
   React.useEffect(() => {
     db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
@@ -92,14 +91,6 @@ const Dashboard = () => {
     return <Redirect to="/login" />;
   }
 
-  function getNextTuesday() {
-    return moment().day(2 + 7).format('MM DD');
-  }
-
-  function getNextTuesdayReadable() {
-    return moment().day(2 + 7).format('MMM DD')
-  }
-
   function checkIn() {
     setIsLoading(true);
     db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).update({
@@ -117,27 +108,34 @@ const Dashboard = () => {
 
   const register = handleCloseConfirm => {
     setIsLoading(true);
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
-      uid: currentUser.uid,
-      firstLastName: currentUser.firstLastName,
-      email: currentUser.email,
-      phoneNumber: currentUser.phoneNumber,
-      role: currentUser.role,
-      checkedIn: false,
-      isRegistered: true,
-    })
-    .then(() => {
-        setIsLoading(false);
-        setOpenToast({ open: true, message: "You successfully registered for this basketball session.", kind: 'success'});
-        setRefresh(!refresh);
-        handleCloseConfirm();
-    })
-    .catch((error) => {
-        setIsLoading(false);
-        setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
-        handleCloseConfirm();
-    });
-  }
+
+    db.collection('userCollection').doc(userFirebase.uid).get().then(
+      (doc) => {
+        const actualData = doc.data();
+
+        db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+          uid: actualData.uid,
+          firstLastName: actualData.firstLastName,
+          email: actualData.email,
+          phoneNumber: actualData.phoneNumber,
+          role: actualData.role,
+          checkedIn: false,
+          isRegistered: true,
+        })
+        .then(() => {
+            setIsLoading(false);
+            setOpenToast({ open: true, message: "You successfully registered for this basketball session.", kind: 'success'});
+            setRefresh(!refresh);
+            handleCloseConfirm();
+        })
+        .catch((error) => {
+            setIsLoading(false);
+            setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
+            handleCloseConfirm();
+        });
+      }
+    );
+  };
 
   const handleChange = (position, activeIndex) => {
     const newItems = [...formValues];
@@ -158,7 +156,7 @@ const Dashboard = () => {
   function registerAllCoreMembers() {
     const userCollection = db.collection('userCollection');
     
-    userCollection.where("role", "==", "Core member").get().then((querySnapshot) => {
+    userCollection.where("role", "==", "Church member").get().then((querySnapshot) => {
       querySnapshot.docs.forEach((doc) => {
         const docRef = db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(doc.data().uid);
         batch.set(docRef, doc.data())
@@ -170,7 +168,7 @@ const Dashboard = () => {
   }
 
   function getPillColor(user) {
-    if (user.role === 'Core member') {
+    if (user.role === 'Church member') {
       return Pill.types.color.BLUE;
     } else if (user.role === 'Regular') {
       return Pill.types.color.LIGHT_BLUE;
@@ -181,6 +179,10 @@ const Dashboard = () => {
 
   function sortedEventUsers() {
     return eventUsers?.sort((a, b) => b.checkedIn - a.checkedIn || a.role.localeCompare(b.role));
+  }
+
+  function isCheckInDisabled(user) {
+    return (moment().weekday() !== 2 && moment().hour() < 17) || user.uid !== userFirebase.uid;
   }
 
   return (
@@ -196,7 +198,7 @@ const Dashboard = () => {
         )}
         <Heading level={2} displayLevel={4}>Upcoming Tuesday, {getNextTuesdayReadable()}</Heading>
         <div>
-          {currentUser?.role === 'Core member' && (
+          {currentUser?.role === 'Church member' && (
             <Button className="register-modal" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 0} onClick={() => registerAllCoreMembers()}>Start new session</Button>
           )}
           {!currentUser?.isRegistered && (
@@ -204,7 +206,7 @@ const Dashboard = () => {
               body="Are you sure you want to register for this upcoming Tuesday's session?"
               confirmLabel="Register"
               onConfirm={register}>
-              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 12}>Register</Confirmation.TriggerButton>
+              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 2 || eventUsers?.length > 12}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
@@ -226,15 +228,16 @@ const Dashboard = () => {
                   xmlns="http://www.w3.org/2000/svg"
                 />
               </NotificationCard.Image>
-              <NotificationCard.Header level={2}>No one has signed up yet!</NotificationCard.Header>
+              <NotificationCard.Header level={2}>The session has not started yet</NotificationCard.Header>
               <NotificationCard.Body>
-                Be the first one to sign up by clicking on the register button above and filling out the covid questions.
+                Come back later when one of the church members starts the upcoming session.
               </NotificationCard.Body>
             </NotificationCard>
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "space-between"}}>
                 <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${eventUsers?.length} / ${MAX_PEOPLE}`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading>
               </div>
               <ul>
                 {sortedEventUsers().map((user, idx) => (
@@ -257,8 +260,8 @@ const Dashboard = () => {
 
                         {user.checkedIn ? (
                           <p className="check-in-button checked-in"><Check /> Checked In</p>
-                        ) : (
-                          <Button className="check-in-button" isDisabled={user.uid !== userFirebase.uid} kind="primary" onClick={() => setModal(!modal)}>Check in</Button>
+                        ) : ( 
+                          <Button className="check-in-button" isDisabled={isCheckInDisabled(user)} kind="primary" onClick={() => setModal(!modal)}>Check in</Button>
                         )}
                       </Card.Footer>
                     </Card>

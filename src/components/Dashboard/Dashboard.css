@@ -39,6 +39,12 @@ ul {
     padding-right: 16px;
   }
 }
+
+[data-pka-anchor='card.footer'] {
+  justify-content: space-between;
+  padding-right: 16px;
+}
+
 ul li {
   list-style-type: none;
   margin-right: 32px;
