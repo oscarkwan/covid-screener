@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import SignUp from "./components/SignUp";
+import Admin from "./components/Admin";
 import { AuthProvider } from "./components/Auth/Auth";
 
 import './App.css';
@@ -15,6 +16,7 @@ const App = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/signup" component={SignUp} />
+          <Route exact path="/admin_hidden_link" component={Admin} />
         </Switch>
       </Router>
     </AuthProvider>

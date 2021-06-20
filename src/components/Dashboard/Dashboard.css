@@ -6,6 +6,7 @@ ul {
 
 ul li {
   list-style-type: none;
+  margin-right: 32px;
 }
 
 [data-pka-anchor="avatar"] {
@@ -34,4 +35,55 @@ fieldset {
 
 .bubbly {
   margin-top: 32px;
+}
+
+.total-players {
+  text-transform: uppercase;
+  font-size: 16px !important;
+  letter-spacing: 0.2em !important;
+}
+
+[data-pka-anchor='counter'] {
+  padding-left: 8px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  padding-right: 5px !important;
+}
+
+[data-pka-anchor='card'] {
+  height: auto !important;
+}
+
+[data-pka-anchor='pill'] {
+  padding: 0 16px !important;
+  margin-top: 8px !important;
+}
+
+.check-in-button {
+  margin-left: 8px;
+}
+
+.checked-in {
+  color: green;
+  display: flex;
+  align-items: center;
+}
+
+.checked-in svg {
+  margin-right: 8px;
+}
+
+.register-trigger {
+  font-family: 'Arial';
+  margin-right: 8px;
+}
+
+[data-pka-anchor='confirmation.confirm-button'] {
+  border-color: #42996d !important;
+  background-color: #5db187 !important;
+  background-image: linear-gradient(#5db187,#42996d) !important;
+}
+
+[data-pka-anchor='popover.card'] {
+  font-family: 'Arial';
 }

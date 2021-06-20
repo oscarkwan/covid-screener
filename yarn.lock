@@ -1874,12 +1874,41 @@
     prop-types "^15.7.2"
     uuid "^8.3.2"
 
+"@paprika/confirmation@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@paprika/confirmation/-/confirmation-1.1.5.tgz#75f683afc6d4749c972d83749b97db2f4191dd75"
+  integrity sha512-Z0pjdBt8WGMoMnkaKaylxP9B7EfUy8G5LR0ZqwTvFsMZjU8UeqBAf0ouvg0j17fkxbLPEz2NJJLsk0yKGt/IZg==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/button" "^1.1.0"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/heading" "^1.0.6"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/popover" "^1.2.3"
+    "@paprika/raw-button" "^1.0.4"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
+    uuid "^8.3.2"
+
 "@paprika/constants@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@paprika/constants/-/constants-1.0.0.tgz#994ff67dcdcd6a80987787371150db1f725a4d1f"
   integrity sha512-y1JOQjnykjOcg0duAWxbsmZgzmvGgxUNUVAv39CUmN9GlzbAifteB+szIrzG2wlxs9IlJGQqbytmgUOJjsoKCg==
   dependencies:
     "@babel/runtime-corejs2" "^7.3.1"
+
+"@paprika/counter@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@paprika/counter/-/counter-1.0.7.tgz#bc074b9d72d98637945787301f39508414e78225"
+  integrity sha512-44QZ7brFfFystpIuKfIpMSMCn3FKrFxYti70JJU2x6wkIifLQ0Jssqw45RCNo1sTBU2JX6BFs4bhD7bIdi5gbQ==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
 
 "@paprika/form-element@^4.0.14":
   version "4.0.14"
@@ -1978,6 +2007,25 @@
     "@paprika/tokens" "^1.0.0"
     prop-types "^15.7.2"
 
+"@paprika/overflow-menu@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@paprika/overflow-menu/-/overflow-menu-1.1.0.tgz#a071900e8b873dbd336f780727d7a8444734d6fb"
+  integrity sha512-IdtrZ4sGDb3YqCE16x/+k/5HIXk/K4UGyfcfkFlRherN2SgzRR+C79iS+7nCBHrtG84tvNxXAP/GXdl2Dyl92Q==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/button" "^1.1.0"
+    "@paprika/confirmation" "^1.1.5"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/icon" "^1.1.1"
+    "@paprika/popover" "^1.2.3"
+    "@paprika/raw-button" "^1.0.4"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
+    uuid "^8.3.2"
+    what-input "^5.2.10"
+
 "@paprika/overlay@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@paprika/overlay/-/overlay-1.0.7.tgz#a7bc83e51dfbe68ce41ceaffd86a5a5a767b85a0"
@@ -1988,6 +2036,19 @@
     prop-types "^15.7.2"
     react-focus-lock "^2.2.1"
     react-transition-group "^4.3.0"
+
+"@paprika/pill@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@paprika/pill/-/pill-1.0.9.tgz#336f14ace0d7fa6e1ed670f1546e75a6db62fc04"
+  integrity sha512-5R8mnNyOkmtf24x0iC6cr4Ib/DFZWwJgcINISdZ0Ia5sIb5/s6UfJTXVL+DOydiiz4ZQUqjoKB25F5AVZ/Pn8g==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/raw-button" "^1.0.4"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
 
 "@paprika/popover@^1.2.3":
   version "1.2.3"
@@ -2030,12 +2091,41 @@
     prop-types "^15.7.2"
     what-input "^5.2.6"
 
+"@paprika/select@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@paprika/select/-/select-2.0.0.tgz#4d8243a846fb03788ca43c0cb7da9c146ced0a43"
+  integrity sha512-7+y1v+QTpwC9xTB9vLZlbH15/pccAKoOOjQvB7IAzorx6a5pTtt/rnBGtlEF3MDx2JbwpBQPA3bvh0yiETWd6A==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/icon" "^1.1.1"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
+
 "@paprika/stylers@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@paprika/stylers/-/stylers-1.0.0.tgz#d2ba8389aeb20f1196eea358b78c08e811fdbc8b"
   integrity sha512-sYINvFjyZBGu/B9rvDFL2WvYBWaPbR9ceERq2Z5rkEqDtnJCwFgP1khD4mgQdGaVKj7577Joybv7aWlTO7QF8A==
   dependencies:
     "@paprika/tokens" "^1.0.0"
+
+"@paprika/table@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@paprika/table/-/table-1.2.4.tgz#13bbfe27162510bb385d6f50cfddf92e6d7e730b"
+  integrity sha512-bo+fZJSGiqLQHFEPyH3C02y+UELw9dl0kuGlNeyuaYvVeIJvj4R0ai7V95GWMZVQevFb5cy1P5lJvDkG4EVokg==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/button" "^1.1.0"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/overflow-menu" "^1.1.0"
+    "@paprika/pill" "^1.0.9"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
+    uuid "^8.3.2"
 
 "@paprika/tag@^0.0.6":
   version "0.0.6"
@@ -2047,6 +2137,20 @@
     "@paprika/constants" "^1.0.0"
     "@paprika/helpers" "^2.1.2"
     "@paprika/raw-button" "^1.0.4"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
+
+"@paprika/toast@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@paprika/toast/-/toast-1.1.4.tgz#5e7dd911b94986f693e8c1f36fea4be8ef3e4cdf"
+  integrity sha512-Y32qUtMq2iXM5A5zMXqLSK4ifuO2+ZIHVE6lXiUMHdwzgVDu+QtiLDe49ejuWjQeACGA8B91zGysCOGb4h3tZA==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/button" "^1.1.0"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/icon" "^1.1.1"
     "@paprika/stylers" "^1.0.0"
     "@paprika/tokens" "^1.0.0"
     prop-types "^15.7.2"
@@ -12099,7 +12203,7 @@ websocket-extensions@>=0.1.1:
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
   integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
-what-input@^5.2.6:
+what-input@^5.2.10, what-input@^5.2.6:
   version "5.2.10"
   resolved "https://registry.yarnpkg.com/what-input/-/what-input-5.2.10.tgz#f79f5b65cf95d75e55e6d580bb0a6b98174cad4e"
   integrity sha512-7AQoIMGq7uU8esmKniOtZG3A+pzlwgeyFpkS3f/yzRbxknSL68tvn5gjE6bZ4OMFxCPjpaBd2udUTqlZ0HwrXQ==

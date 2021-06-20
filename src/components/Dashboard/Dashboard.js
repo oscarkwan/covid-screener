@@ -3,12 +3,17 @@ import { Redirect, useHistory } from "react-router-dom";
 import { Fieldset } from "@paprika/form-element";
 import Avatar from "@paprika/avatar";
 import { getAvatarColors, getInitialsFromText } from '@paprika/avatar/lib/helpers';
+import Card from "@paprika/card";
+import Confirmation from "@paprika/confirmation";
+import Counter from "@paprika/counter";
 import Heading from "@paprika/heading";
 import Button from "@paprika/button";
-import Tag from "@paprika/tag";
+import Toast from "@paprika/toast";
 import NotificationCard from "@paprika/notification-card";
 import Radio from "@paprika/radio";
 import Modal from "@paprika/modal";
+import Pill from "@paprika/pill";
+import Check from "@paprika/icon/lib/Check";
 import moment from "moment";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -20,7 +25,10 @@ import './Dashboard.css';
 const errorMsg = "There was an error.";
 const { Label, Content, Error } = Fieldset;
 
+const MAX_PEOPLE = 12;
+
 const db = firebase.firestore();
+const batch = db.batch();
 
 const bubblieString = `<title>Bubbly Mascot</title>
 <defs>
@@ -56,7 +64,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [refresh, setRefresh] = React.useState(false);
   const [modal, setModal] = React.useState(false);
-
+  const [isOpenToast, setOpenToast] = React.useState({ open: false, message: '', kind: 'success' });
   
   const userFirebase = firebase.auth().currentUser;
   
@@ -90,13 +98,10 @@ const Dashboard = () => {
     return moment().day(2 + 7).format('MM DD');
   }
 
-  function register() {
+  function checkIn() {
     setIsLoading(true);
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
-      uid: currentUser.uid,
-      firstLastName: currentUser.firstLastName,
-      email: currentUser.email,
-      phoneNumber: currentUser.phoneNumber
+    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).update({
+      checkedIn: true,
     })
     .then(() => {
         setIsLoading(false);
@@ -108,6 +113,28 @@ const Dashboard = () => {
     });
   }
 
+  const register = handleCloseConfirm => {
+    setIsLoading(true);
+    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+      uid: currentUser.uid,
+      firstLastName: currentUser.firstLastName,
+      email: currentUser.email,
+      phoneNumber: currentUser.phoneNumber,
+      role: currentUser.role,
+      checkedIn: false,
+      isRegistered: true,
+    })
+    .then(() => {
+        setIsLoading(false);
+        handleCloseConfirm();
+        setRefresh(true);
+    })
+    .catch((error) => {
+        setIsLoading(false);
+        handleCloseConfirm();
+    });
+  }
+
   const handleChange = (position, activeIndex) => {
     const newItems = [...formValues];
     newItems[position] = activeIndex;
@@ -115,22 +142,72 @@ const Dashboard = () => {
   };
 
   const handleRemove = () => {
-    console.log('handleRemove');
+    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
+      setOpenToast({ open: true, message: "You successfully unregistered for this basketball session.", kind: 'success'});
+      setRefresh(true);
+    }).catch((error => {
+      setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
+      setRefresh(true);
+    }))
   };
+
+  function registerAllCoreMembers() {
+    const userCollection = db.collection('userCollection');
+    
+    userCollection.where("role", "==", "Core member").get().then((querySnapshot) => {
+      querySnapshot.docs.forEach((doc) => {
+        const docRef = db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(doc.data().uid);
+        batch.set(docRef, doc.data())
+      });
+
+      batch.commit();
+      setRefresh(true);
+    });
+  }
+
+  function getPillColor(user) {
+    if (user.role === 'Core member') {
+      return Pill.types.color.BLUE;
+    } else if (user.role === 'Regular') {
+      return Pill.types.color.LIGHT_BLUE;
+    } else {
+      return Pill.types.color.GREY;
+    }
+  }
+
+  function sortedEventUsers() {
+    return eventUsers?.sort((a, b) => b.checkedIn - a.checkedIn || a.role.localeCompare(b.role));
+  }
 
   return (
     <div>
+      {isOpenToast.open && (
+        <Toast kind={isOpenToast.kind} isFixed hasCloseButton={false} canAutoClose autoCloseDelay={4000}>
+          {isOpenToast.message}
+        </Toast>
+      )}
       <header>
         {currentUser && (
           <Heading level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
         <Heading level={2} displayLevel={4}>Upcoming Tuesday {getNextTuesday()}</Heading>
         <div>
-          <Button className="register-modal" kind="primary" onClick={() => setModal(!modal)}>Register</Button>
+          {currentUser?.role === 'Core member' && (
+            <Button className="register-modal" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 0} onClick={() => registerAllCoreMembers()}>Start new session</Button>
+          )}
+          {!currentUser?.isRegistered && (
+            <Confirmation
+              body="Are you sure you want to register for this upcoming Tuesday's session?"
+              confirmLabel="Register"
+              onConfirm={register}>
+              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 12}>Register</Confirmation.TriggerButton>
+            </Confirmation>
+          )}
           <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button>
         </div>        
       </header>
       
+      <hr />
       {eventUsers && (
         <>
           {eventUsers.length === 0 ? (
@@ -152,22 +229,35 @@ const Dashboard = () => {
             </NotificationCard>
           ) : (
             <>
-              <Heading level={3} displayLevel={3}>Players signed up:</Heading>
+              <div style={{display: "flex", justifyContent: "space-between"}}>
+                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${eventUsers?.length} / ${MAX_PEOPLE}`} /></Heading>
+              </div>
               <ul>
-                {eventUsers.map((user, idx) => (
+                {sortedEventUsers().map((user, idx) => (
                   <li key={idx}>
-                    <Tag
-                      size={Tag.types.size.LARGE}
-                      avatar={
+                    <Card
+                      size="small"
+                      className={user.uid === userFirebase.uid ? 'current-user' : ''}
+                    >
+                      <Card.Header>
                         <Avatar backgroundColor={getAvatarColors(user.firstLastName).backgroundColor} color={getAvatarColors(user.firstLastName).fontColor} isRound size="large">
                           {getInitialsFromText(user.firstLastName, 2).toUpperCase()}
                         </Avatar>
-                      }
-                      onRemove={user.uid === userFirebase.uid ? handleRemove : null}
-                      className={user.uid === userFirebase.uid ? 'current-user' : ''}
-                    >
-                      {user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}
-                    </Tag>
+                      </Card.Header>
+                      <Card.Content>
+                        <Card.Title>{user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}</Card.Title>
+                        <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata>
+                      </Card.Content>
+                      <Card.Footer>
+                        <Button onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
+
+                        {user.checkedIn ? (
+                          <p className="check-in-button checked-in"><Check /> Checked In</p>
+                        ) : (
+                          <Button className="check-in-button" isDisabled={user.uid !== userFirebase.uid} kind="primary" onClick={() => setModal(!modal)}>Check in</Button>
+                        )}
+                      </Card.Footer>
+                    </Card>
                   </li>
                 ))}
               </ul>
@@ -175,10 +265,9 @@ const Dashboard = () => {
           )}
         </>
       )}
-    
 
       <Modal isOpen={modal} onClose={() => setModal(!modal)}>
-        <Modal.Header>Register for Tuesday {getNextTuesday()}</Modal.Header>
+        <Modal.Header>Check in for Tuesday {getNextTuesday()}</Modal.Header>
         <Modal.Content>
           <Fieldset>
             <Label>In the past 14 days, have you experienced any COVID-19 symptoms</Label>
@@ -227,15 +316,12 @@ const Dashboard = () => {
               )}
             </Content>
           </Fieldset>
-
-          <p>Note: Due to current restrictions we are only allowing 12 people per session. If you can not register that means it is full.</p>
         </Modal.Content>
         <Modal.Footer>
-          <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0)} onClick={() => register()}>Register</Button>
+          <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0) || eventUsers.length > MAX_PEOPLE} onClick={() => checkIn()}>Check in</Button>
           <Button kind="minor" onClick={() => setModal(!modal)}>Cancel</Button>
         </Modal.Footer>
       </Modal>
-      
     </div>
   );
 };

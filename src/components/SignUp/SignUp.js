@@ -48,12 +48,13 @@ const SignUp = () => {
           });
         }
 
-        db.collection('userCollection').add(
+        db.collection('userCollection').doc(user.uid).set(
           {
             uid: user.uid,
             firstLastName: name,
             email: emailAddress,
-            phoneNumber: phone
+            phoneNumber: phone,
+            role: "Not assigned"
           }
         );
 
