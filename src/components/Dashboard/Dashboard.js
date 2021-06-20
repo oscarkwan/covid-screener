@@ -98,6 +98,10 @@ const Dashboard = () => {
     return moment().day(2 + 7).format('MM DD');
   }
 
+  function getNextTuesdayReadable() {
+    return moment().day(2 + 7).format('MMM DD')
+  }
+
   function checkIn() {
     setIsLoading(true);
     db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).update({
@@ -126,11 +130,13 @@ const Dashboard = () => {
     })
     .then(() => {
         setIsLoading(false);
-        handleCloseConfirm();
+        setOpenToast({ open: true, message: "You successfully registered for this basketball session.", kind: 'success'});
         setRefresh(true);
+        handleCloseConfirm();
     })
     .catch((error) => {
         setIsLoading(false);
+        setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
         handleCloseConfirm();
     });
   }
@@ -188,9 +194,9 @@ const Dashboard = () => {
       )}
       <header>
         {currentUser && (
-          <Heading level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
+          <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
-        <Heading level={2} displayLevel={4}>Upcoming Tuesday {getNextTuesday()}</Heading>
+        <Heading level={2} displayLevel={4}>Upcoming Tuesday, {getNextTuesdayReadable()}</Heading>
         <div>
           {currentUser?.role === 'Core member' && (
             <Button className="register-modal" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 0} onClick={() => registerAllCoreMembers()}>Start new session</Button>
@@ -203,7 +209,7 @@ const Dashboard = () => {
               <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 12}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
-          <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button>
+          {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
         </div>        
       </header>
       
@@ -267,10 +273,10 @@ const Dashboard = () => {
       )}
 
       <Modal isOpen={modal} onClose={() => setModal(!modal)}>
-        <Modal.Header>Check in for Tuesday {getNextTuesday()}</Modal.Header>
+        <Modal.Header>Check in for Tuesday, {getNextTuesdayReadable()}</Modal.Header>
         <Modal.Content>
           <Fieldset>
-            <Label>In the past 14 days, have you experienced any COVID-19 symptoms</Label>
+            <Label>In the past 14 days, have you experienced any COVID-19 symptoms.</Label>
             <Content>
               {a11yProps => (
                 <Radio.Group
@@ -302,7 +308,7 @@ const Dashboard = () => {
           </Fieldset>
 
           <Fieldset>
-            <Label>In the past 14 days, have you returned to Canada from any country (including the United States)</Label>
+            <Label>In the past 14 days, have you returned to Canada from any country (including the United States).</Label>
             <Content>
               {a11yProps => (
                 <Radio.Group

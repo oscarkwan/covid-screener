@@ -4,6 +4,39 @@ ul {
   padding: 0;
 }
 
+@media (max-width: 600px) {
+  ul {
+    flex-direction: column;
+  }
+
+  ul li {
+    margin-bottom: 24px !important;
+    margin-right: 0 !important;
+  }
+
+  [data-pka-anchor='card'] {
+    width: 100% !important;
+  }
+
+  header {
+    height: auto !important;
+    flex-wrap: wrap;    
+    padding-bottom: 16px;
+  }
+
+  header h2 {
+    width: 60%;
+  }
+
+  .current-user-name {
+    width: 25% !important;
+  }
+
+  [data-pka-anchor='card.footer'] {
+    justify-content: space-between;
+    padding-right: 16px;
+  }
+}
 ul li {
   list-style-type: none;
   margin-right: 32px;
