@@ -18,12 +18,10 @@ import moment from "moment";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
-import { config } from "../../config";
 
 import './Dashboard.css';
 
-const errorMsg = "There was an error.";
-const { Label, Content, Error } = Fieldset;
+const { Label, Content } = Fieldset;
 
 const MAX_PEOPLE = 12;
 
@@ -110,7 +108,7 @@ const Dashboard = () => {
     .then(() => {
         setIsLoading(false);
         setModal(!modal);
-        setRefresh(true);
+        setRefresh(!refresh);
     })
     .catch((error) => {
         setIsLoading(false);
@@ -131,7 +129,7 @@ const Dashboard = () => {
     .then(() => {
         setIsLoading(false);
         setOpenToast({ open: true, message: "You successfully registered for this basketball session.", kind: 'success'});
-        setRefresh(true);
+        setRefresh(!refresh);
         handleCloseConfirm();
     })
     .catch((error) => {
@@ -150,10 +148,10 @@ const Dashboard = () => {
   const handleRemove = () => {
     db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
       setOpenToast({ open: true, message: "You successfully unregistered for this basketball session.", kind: 'success'});
-      setRefresh(true);
+      setRefresh(!refresh);
     }).catch((error => {
       setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
-      setRefresh(true);
+      setRefresh(!refresh);
     }))
   };
 
@@ -167,7 +165,7 @@ const Dashboard = () => {
       });
 
       batch.commit();
-      setRefresh(true);
+      setRefresh(!refresh);
     });
   }
 

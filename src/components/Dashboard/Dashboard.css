@@ -1,5 +1,6 @@
 ul {
   display: flex;
+  flex-wrap: wrap;
   margin: 0;
   padding: 0;
 }
@@ -12,6 +13,7 @@ ul {
   ul li {
     margin-bottom: 24px !important;
     margin-right: 0 !important;
+    width: 100% !important;
   }
 
   [data-pka-anchor='card'] {
@@ -40,6 +42,8 @@ ul {
 ul li {
   list-style-type: none;
   margin-right: 32px;
+  margin-bottom: 24px;
+  width: 230px;
 }
 
 [data-pka-anchor="avatar"] {
