@@ -153,7 +153,7 @@ const Dashboard = () => {
     }))
   };
 
-  function registerAllCoreMembers() {
+  function registerAllChurchMembers() {
     const userCollection = db.collection('userCollection');
     
     userCollection.where("role", "==", "Church member").get().then((querySnapshot) => {
@@ -198,15 +198,15 @@ const Dashboard = () => {
         )}
         <Heading level={2} displayLevel={4}>Upcoming Tuesday, {getNextTuesdayReadable()}</Heading>
         <div>
-          {currentUser?.role === 'Church member' && (
-            <Button className="register-modal" kind="primary" isDisabled={moment().weekday() !== 6 || eventUsers?.length > 0} onClick={() => registerAllCoreMembers()}>Start new session</Button>
+          {currentUser?.role === 'Church member' && eventUsers?.length === 0 && (
+            <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
           )}
           {!currentUser?.isRegistered && (
             <Confirmation
               body="Are you sure you want to register for this upcoming Tuesday's session?"
               confirmLabel="Register"
               onConfirm={register}>
-              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 2 || eventUsers?.length > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
+              <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 2 || eventUsers?.length > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
@@ -235,10 +235,11 @@ const Dashboard = () => {
             </NotificationCard>
           ) : (
             <>
-              <div style={{display: "flex", justifyContent: "space-between"}}>
+              <div style={{display: "flex", justifyContent: "center"}}>
                 <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${eventUsers?.length} / ${MAX_PEOPLE}`} /></Heading>
-                <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading>
+                {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
+              <p style={{textAlign: "center"}}>Note: Check in is only available a couple of hours before basketball start time.</p>
               <ul>
                 {sortedEventUsers().map((user, idx) => (
                   <li key={idx}>
@@ -256,12 +257,16 @@ const Dashboard = () => {
                         <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata>
                       </Card.Content>
                       <Card.Footer>
-                        <Button onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
-
                         {user.checkedIn ? (
                           <p className="check-in-button checked-in"><Check /> Checked In</p>
                         ) : ( 
-                          <Button className="check-in-button" isDisabled={isCheckInDisabled(user)} kind="primary" onClick={() => setModal(!modal)}>Check in</Button>
+                          <>
+                          <Button onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
+                          <Button isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
+                            setModal(!modal);
+                            document.querySelector("[role='dialog']").scrollIntoView({ behavior: "smooth "});
+                          }}>Check in</Button>
+                          </>
                         )}
                       </Card.Footer>
                     </Card>

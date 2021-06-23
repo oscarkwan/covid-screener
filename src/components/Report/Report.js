@@ -35,6 +35,9 @@ function Report() {
           <Table.ColumnDefinition header="Role" cell="role" />
         </Table>
       ) : null}
+      {users ? (
+        <p>Total users: {users.length}</p>
+      ) : null}
     </>
   )
 }

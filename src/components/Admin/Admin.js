@@ -38,7 +38,6 @@ const db = firebase.firestore();
 const userFirebase = firebase.auth().currentUser;
 
 function Admin() {
-
   const [users, setUsers] = React.useState(null);
 
   React.useEffect(() => {
@@ -68,6 +67,7 @@ function Admin() {
   return (
     <div>
       <Heading level={1}>Admin page</Heading>
+      <Heading level={2}>Settings</Heading>
       {users ? (
         <Table data={users}>
           <Table.ColumnDefinition header="First and Last Name" cell={props => {

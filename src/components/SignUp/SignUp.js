@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import FormElement from "@paprika/form-element";
 import Input from "@paprika/input";
 import Heading from "@paprika/heading";
@@ -17,13 +17,15 @@ const db = firebase.firestore();
 
 const SignUp = () => {
   const [currentUser, setCurrentUser] = useState(null);    
-
   const [emailAddress, setEmail] = useState(null);
   const [name, setName] = useState(null);
   const [phone, setPhone] = useState(null);
   const [pw, setPw] = useState(null);
   const [confirmPw, setConfirmPw] = useState(null);
   const [error, setError] = useState(false);
+  const [formError, setFormError] = useState({ show: false, message: '' });
+
+  const history = useHistory();
 
   function checkPassword() {
     if(pw) {
@@ -60,7 +62,7 @@ const SignUp = () => {
         setCurrentUser(true);
       }
     ).catch((error) => {
-      console.log(error);
+      setFormError({ show: !formError.show, message: error.message });
     })
   };
 
@@ -80,48 +82,55 @@ const SignUp = () => {
     <>
       <Heading level={1}>Sign Up</Heading>
       <form>
-        <FormElement isRequired>
+        <FormElement isRequired size={FormElement.types.size.LARGE}>
           <Label>Email address</Label>
           <Content>
             {a11yProps => (
-              <Input type="email" name="email" placeholder="Email address" {...a11yProps} onChange={(e) => setEmail(e.target.value)} />
+              <Input size={Input.types.size.LARGE} type="email" name="email" placeholder="Email address" {...a11yProps} onChange={(e) => setEmail(e.target.value)} />
             )}
           </Content>
         </FormElement>
-        <FormElement>
+        <FormElement isRequired size={FormElement.types.size.LARGE}>
           <Label>Password</Label>
           <Content>
             {a11yProps => (
-              <Input type="password" name="password" placeholder="Password" {...a11yProps} onChange={(e) => setPw(e.target.value)} />
+              <Input size={Input.types.size.LARGE} type="password" name="password" placeholder="Password" {...a11yProps} onChange={(e) => setPw(e.target.value)} />
             )}
           </Content>
         </FormElement>
-        <FormElement>
+        <FormElement isRequired size={FormElement.types.size.LARGE}>
           <Label>Confirm Password</Label>
           <Content>
             {a11yProps => (
-              <Input onBlur={() => checkPassword()} type="password" name="password_confirm" placeholder="Confirm password" {...a11yProps} onChange={(e) => setConfirmPw(e.target.value)} />
+              <Input size={Input.types.size.LARGE} onBlur={() => checkPassword()} type="password" name="password_confirm" placeholder="Confirm password" {...a11yProps} onChange={(e) => setConfirmPw(e.target.value)} />
             )}
           </Content>
           {error && <Error>Passwords are not the same and password must be greater than 6 characters</Error>}
         </FormElement>
-        <FormElement>
+        <FormElement isRequired size={FormElement.types.size.LARGE}>
           <Label>Phone number</Label>
           <Content>
             {a11yProps => (
-              <Input type="tel" name="phoneNumber" placeholder="Phone number" {...a11yProps} onChange={(e) => setPhone(e.target.value)}/>
+              <Input size={Input.types.size.LARGE} type="tel" name="phoneNumber" placeholder="Phone number" {...a11yProps} onChange={(e) => setPhone(e.target.value)}/>
             )}
           </Content>
         </FormElement>
-        <FormElement>
+        <FormElement isRequired size={FormElement.types.size.LARGE}>
           <Label>First and last name</Label>
           <Content>
             {a11yProps => (
-              <Input type="text" name="firstLastName" placeholder="First and last name" {...a11yProps} onChange={(e) => setName(e.target.value)}/>
+              <Input size={Input.types.size.LARGE} type="text" name="firstLastName" placeholder="First and last name" {...a11yProps} onChange={(e) => setName(e.target.value)}/>
             )}
           </Content>
+          {formError.show && (
+            <Error>
+              {formError.message}
+            </Error>
+          )}
         </FormElement>
-        <Button kind="primary" type="submit" onClick={handleSubmit} isDisabled={isButtonDisabled()}>Submit</Button>
+        <p>Note: Phone number, name and email is saved for covid tracing.</p>
+        <Button size={Button.types.size.LARGE} kind="primary" type="submit" onClick={handleSubmit} isDisabled={isButtonDisabled()}>Sign up</Button>
+        <Button style={{"marginLeft": "16px"}} size={Button.types.size.LARGE} onClick={() => history.push('/')}>Back to Log in</Button>
       </form>
     </>
   );

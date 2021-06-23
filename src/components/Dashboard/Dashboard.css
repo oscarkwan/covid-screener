@@ -38,6 +38,14 @@ ul {
     justify-content: space-between;
     padding-right: 16px;
   }
+
+  [data-pka-anchor='counter'] {
+    margin-top: 8px;
+  }
+}
+
+[data-pka-anchor='popover.card'] {
+  font-size: 16px !important;
 }
 
 [data-pka-anchor='card.footer'] {
@@ -110,6 +118,7 @@ fieldset {
   color: green;
   display: flex;
   align-items: center;
+  font-size: 18px;
 }
 
 .checked-in svg {

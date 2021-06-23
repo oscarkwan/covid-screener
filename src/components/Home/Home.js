@@ -16,14 +16,16 @@ const Home = () => {
 
   const [formEmail, setFormEmail] = React.useState(null);
   const [formPw, setFormPw] = React.useState(null);
+  const [wrongPw, setWrongPw] = React.useState({ show: false, message: ""});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      config.auth().signInWithEmailAndPassword(formEmail, formPw);
-    } catch (error) {
-      alert(error);
-    }
+    config.auth().signInWithEmailAndPassword(formEmail, formPw).then(
+      (userCredential) => {
+        console.log(userCredential);
+      }).catch((error) => {
+        setWrongPw({ show: !wrongPw.show, message: error.message });
+    });
   };
 
   const { currentUser } = useContext(AuthContext);
@@ -35,29 +37,33 @@ const Home = () => {
   return (
     <div className="home-page">
       <header>
-        <Heading level={1}>RGAC Tuesday Basketball
-        </Heading>
-        <Button onClick={() => history.push('/signup')}>
-          Sign Up
-        </Button>
+        <Heading level={1}>RGAC Tuesday Basketball 🏀</Heading>
       </header>
-      <FormElement>
+      <FormElement size={FormElement.types.size.LARGE}>
         <Label>Email address</Label>
         <Content>
           {a11yProps => (
-            <Input type="email" onChange={(e) => setFormEmail(e.target.value)} placeholder="Email address" {...a11yProps} />
+            <Input size={Input.types.size.LARGE} type="email" onChange={(e) => setFormEmail(e.target.value)} placeholder="Email address" {...a11yProps} />
           )}
         </Content>
       </FormElement>
-      <FormElement>
+      <FormElement size={FormElement.types.size.LARGE}>
         <Label>Password</Label>
         <Content>
           {a11yProps => (
-            <Input type="password" onChange={(e) => setFormPw(e.target.value)} placeholder="Password" {...a11yProps} />
+            <Input size={Input.types.size.LARGE} type="password" onChange={(e) => setFormPw(e.target.value)} placeholder="Password" {...a11yProps} />
           )}
         </Content>
+        {wrongPw.show && (
+          <Error>
+            {wrongPw.message}
+          </Error>
+        )}
       </FormElement>
-      <Button kind="primary" onClick={handleSubmit}>Log in</Button>
+      <Button size={Button.types.size.LARGE} kind="primary" onClick={handleSubmit}>Log in</Button>
+      <Button style={{"margin-left": "16px"}} size={Button.types.size.LARGE} onClick={() => history.push('/signup')}>
+        Sign Up
+      </Button>
     </div>
   );
 };
