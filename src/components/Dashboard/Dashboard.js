@@ -206,7 +206,7 @@ const Dashboard = () => {
               body="Are you sure you want to register for this upcoming Tuesday's session?"
               confirmLabel="Register"
               onConfirm={register}>
-              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 2 || eventUsers?.length > 12}>Register</Confirmation.TriggerButton>
+              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 2 || eventUsers?.length > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
