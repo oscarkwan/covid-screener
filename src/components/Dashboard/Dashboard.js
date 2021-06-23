@@ -59,12 +59,13 @@ const bubblieString = `<title>Bubbly Mascot</title>
 const Dashboard = () => {
   const [formValues, setFormValues] = React.useState([0, 0, 0]);
   const [currentUser, setCurrentUser] = React.useState(null);
+  const [beastUser, setBeastUser] = React.useState(null);
   const [eventUsers, setEventUsers] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [refresh, setRefresh] = React.useState(false);
   const [modal, setModal] = React.useState(false);
   const [isOpenToast, setOpenToast] = React.useState({ open: false, message: '', kind: 'success' });
-  
+
   const userFirebase = firebase.auth().currentUser;
 
   React.useEffect(() => {
@@ -83,6 +84,15 @@ const Dashboard = () => {
       const foundU = userUuids.filter(u => u.uid === userFirebase.uid);
 
       setCurrentUser(...foundU);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
+      if(doc) {
+        setBeastUser(doc.data());
+      }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -121,6 +131,7 @@ const Dashboard = () => {
           role: actualData.role,
           checkedIn: false,
           isRegistered: true,
+          onWaitList: false,
         })
         .then(() => {
             setIsLoading(false);
@@ -132,6 +143,36 @@ const Dashboard = () => {
             setIsLoading(false);
             setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
             handleCloseConfirm();
+        });
+      }
+    );
+  };
+
+  const registerWaitlist = () => {
+    setIsLoading(true);
+
+    db.collection('userCollection').doc(userFirebase.uid).get().then(
+      (doc) => {
+        const actualData = doc.data();
+
+        db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+          uid: actualData.uid,
+          firstLastName: actualData.firstLastName,
+          email: actualData.email,
+          phoneNumber: actualData.phoneNumber,
+          role: actualData.role,
+          checkedIn: false,
+          isRegistered: true,
+          onWaitList: true,
+        })
+        .then(() => {
+            setIsLoading(false);
+            setOpenToast({ open: true, message: "You have signed up for the waitlist. You will be notified if you will play this tuesday.", kind: 'success'});
+            setRefresh(!refresh);
+        })
+        .catch((error) => {
+            setIsLoading(false);
+            setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
         });
       }
     );
@@ -185,29 +226,38 @@ const Dashboard = () => {
     return (moment().weekday() !== 2 && moment().hour() < 17) || user.uid !== userFirebase.uid;
   }
 
+  function getNoWaitList() {
+    return eventUsers?.filter((user) => !user.onWaitList).length
+  }
+
+
   return (
-    <div>
+    <div className="dashboard">
       {isOpenToast.open && (
         <Toast kind={isOpenToast.kind} isFixed hasCloseButton={false} canAutoClose autoCloseDelay={4000}>
           {isOpenToast.message}
         </Toast>
       )}
+      <Heading level={1} className="title">RGAC Tuesday Basketball 🏀</Heading>
       <header>
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
         <Heading level={2} displayLevel={4}>Upcoming Tuesday, {getNextTuesdayReadable()}</Heading>
         <div>
-          {currentUser?.role === 'Church member' && eventUsers?.length === 0 && (
+          {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
           )}
-          {!currentUser?.isRegistered && (
+          {!beastUser?.isRegistered && getNoWaitList() < MAX_PEOPLE && (
             <Confirmation
               body="Are you sure you want to register for this upcoming Tuesday's session?"
               confirmLabel="Register"
               onConfirm={register}>
-              <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={moment().weekday() !== 2 || eventUsers?.length > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
+              <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
+          )}
+          {getNoWaitList() >= MAX_PEOPLE && (
+            <Button onClick={registerWaitlist} size={Button.types.size.LARGE} kind="primary" isDisabled={beastUser?.onWaitList}>{beastUser?.onWaitList ? 'Already on the waitlist ' : 'Register for the waitlist'}</Button>
           )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
         </div>        
@@ -236,42 +286,48 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${eventUsers?.length} / ${MAX_PEOPLE}`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / ${MAX_PEOPLE}`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <p style={{textAlign: "center"}}>Note: Check in is only available a couple of hours before basketball start time.</p>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br />If there are already {MAX_PEOPLE} players signed up, you can register and be put on the waitlist.</Toast>
               <ul>
-                {sortedEventUsers().map((user, idx) => (
-                  <li key={idx}>
-                    <Card
-                      size="small"
-                      className={user.uid === userFirebase.uid ? 'current-user' : ''}
-                    >
-                      <Card.Header>
-                        <Avatar backgroundColor={getAvatarColors(user.firstLastName).backgroundColor} color={getAvatarColors(user.firstLastName).fontColor} isRound size="large">
-                          {getInitialsFromText(user.firstLastName, 2).toUpperCase()}
-                        </Avatar>
-                      </Card.Header>
-                      <Card.Content>
-                        <Card.Title>{user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}</Card.Title>
-                        <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata>
-                      </Card.Content>
-                      <Card.Footer>
-                        {user.checkedIn ? (
-                          <p className="check-in-button checked-in"><Check /> Checked In</p>
-                        ) : ( 
-                          <>
-                          <Button onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
-                          <Button isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
-                            setModal(!modal);
-                            document.querySelector("[role='dialog']").scrollIntoView({ behavior: "smooth "});
-                          }}>Check in</Button>
-                          </>
-                        )}
-                      </Card.Footer>
-                    </Card>
-                  </li>
-                ))}
+                {sortedEventUsers().map((user, idx) => {
+                  if (user.onWaitList) {
+                    return null;
+                  }
+                  return (
+                    <li key={idx}>
+                      <Card
+                        size="small"
+                        className={user.uid === userFirebase.uid ? 'current-user' : ''}
+                      >
+                        <Card.Header>
+                          <Avatar backgroundColor={getAvatarColors(user.firstLastName).backgroundColor} color={getAvatarColors(user.firstLastName).fontColor} isRound size="large">
+                            {getInitialsFromText(user.firstLastName, 2).toUpperCase()}
+                          </Avatar>
+                        </Card.Header>
+                        <Card.Content>
+                          <Card.Title>{user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}</Card.Title>
+                          <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata>
+                        </Card.Content>
+                        <Card.Footer style={{"height": "60px"}}>
+                          {user.checkedIn ? (
+                            <p className="check-in-button checked-in"><Check /> Checked In</p>
+                          ) : ( 
+                            <>
+                            <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
+                            <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
+                              setModal(!modal);
+                              document.querySelector("[role='dialog']").scrollIntoView({ behavior: "smooth "});
+                            }}>Check in</Button>
+                            </>
+                          )}
+                        </Card.Footer>
+                      </Card>
+                    </li>
+                    );
+                  }
+                )}
               </ul>
             </>
           )}

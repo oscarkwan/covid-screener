@@ -5,7 +5,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
 
-import { getNextTuesday } from "../../helpers/getDate";
+import { getNextTuesday, getNextTuesdayReadable } from "../../helpers/getDate";
 
 const db = firebase.firestore();
 
@@ -24,11 +24,14 @@ function Report() {
     }))
   }, []);
 
+  function sortUsers() {
+    return users.sort((a, b) => a.firstLastName.localeCompare(b.firstLastName));
+  }
   return (
     <>
-      <Heading level={1}>Report for this Tuesday</Heading>
+      <Heading level={1}>Report for {getNextTuesdayReadable()}</Heading>
       {users ? (
-        <Table data={users}>
+        <Table data={sortUsers()}>
           <Table.ColumnDefinition header="First and Last Name" cell="firstLastName" />
           <Table.ColumnDefinition header="Phone Number" cell="phoneNumber" />
           <Table.ColumnDefinition header="Email Address" cell="email" />

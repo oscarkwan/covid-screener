@@ -6,6 +6,10 @@ ul {
 }
 
 @media (max-width: 600px) {
+  .dashboard .title {
+    font-size: 26px;
+  }
+
   ul {
     flex-direction: column;
   }
