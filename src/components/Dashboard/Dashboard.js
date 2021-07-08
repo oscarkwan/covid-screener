@@ -230,7 +230,6 @@ const Dashboard = () => {
     return eventUsers?.filter((user) => !user.onWaitList).length
   }
 
-
   return (
     <div className="dashboard">
       {isOpenToast.open && (
@@ -248,7 +247,7 @@ const Dashboard = () => {
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
           )}
-          {!beastUser?.isRegistered && getNoWaitList() < MAX_PEOPLE && (
+          {!beastUser?.isRegistered && eventUsers?.length > 0 && (getNoWaitList() < MAX_PEOPLE) && (
             <Confirmation
               body="Are you sure you want to register for this upcoming Tuesday's session?"
               confirmLabel="Register"
@@ -256,7 +255,7 @@ const Dashboard = () => {
               <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
-          {getNoWaitList() >= MAX_PEOPLE && (
+          {getNoWaitList() >= MAX_PEOPLE && !beastUser?.isRegistered && (
             <Button onClick={registerWaitlist} size={Button.types.size.LARGE} kind="primary" isDisabled={beastUser?.onWaitList}>{beastUser?.onWaitList ? 'Already on the waitlist ' : 'Register for the waitlist'}</Button>
           )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
@@ -286,10 +285,10 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / ${MAX_PEOPLE}`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br />If there are already {MAX_PEOPLE} players signed up, you can register and be put on the waitlist.</Toast>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br />If there are already {MAX_PEOPLE} players signed up, you can register and be put on the waitlist. The first 16 slots are on a first come first serve basis, the last 4 spots we will randomly pick from the waitlist.</Toast>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
                   if (user.onWaitList) {
@@ -308,7 +307,7 @@ const Dashboard = () => {
                         </Card.Header>
                         <Card.Content>
                           <Card.Title>{user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}</Card.Title>
-                          <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata>
+                          {/* <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata> */}
                         </Card.Content>
                         <Card.Footer style={{"height": "60px"}}>
                           {user.checkedIn ? (
@@ -318,7 +317,7 @@ const Dashboard = () => {
                             <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
                             <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
                               setModal(!modal);
-                              document.querySelector("[role='dialog']").scrollIntoView({ behavior: "smooth "});
+                              document.querySelector("[role='dialog']")?.scrollIntoView({ behavior  : "smooth "});
                             }}>Check in</Button>
                             </>
                           )}
@@ -386,7 +385,7 @@ const Dashboard = () => {
           </Fieldset>
         </Modal.Content>
         <Modal.Footer>
-          <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0) || eventUsers.length > MAX_PEOPLE} onClick={() => checkIn()}>Check in</Button>
+          <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0)} onClick={() => checkIn()}>Check in</Button>
           <Button kind="minor" onClick={() => setModal(!modal)}>Cancel</Button>
         </Modal.Footer>
       </Modal>
