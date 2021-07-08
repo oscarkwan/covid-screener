@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "rgac-badminton"
+    "basketball": "covid-oscar",
+    "badminton": "rgac-badminton"
   }
 }

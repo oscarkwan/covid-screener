@@ -237,7 +237,7 @@ const Dashboard = () => {
           {isOpenToast.message}
         </Toast>
       )}
-      <Heading level={1} className="title">RGAC Tuesday Basketball 🏀</Heading>
+      <Heading level={1} className="title">RGAC Badminton 🏸</Heading>
       <header>
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>

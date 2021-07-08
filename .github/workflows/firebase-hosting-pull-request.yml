@@ -14,4 +14,4 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_COVID_SCREENER_17547 }}'
-          projectId: covid-screener-17547
+          projectId: rgac-badminton
