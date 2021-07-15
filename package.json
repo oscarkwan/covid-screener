@@ -16,7 +16,9 @@
     "@paprika/modal": "^1.0.11",
     "@paprika/notification-card": "^1.0.9",
     "@paprika/overflow-menu": "^1.1.0",
+    "@paprika/panel": "^2.1.1",
     "@paprika/pill": "^1.0.9",
+    "@paprika/popover": "^1.2.3",
     "@paprika/radio": "^1.0.10",
     "@paprika/select": "^2.0.0",
     "@paprika/table": "^1.2.4",
@@ -36,7 +38,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "firebase deploy --only hosting"
   },
   "eslintConfig": {
     "extends": [

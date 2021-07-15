@@ -13,6 +13,8 @@ import NotificationCard from "@paprika/notification-card";
 import Radio from "@paprika/radio";
 import Modal from "@paprika/modal";
 import Pill from "@paprika/pill";
+import Panel from "@paprika/panel";
+import Popover from "@paprika/popover";
 import Check from "@paprika/icon/lib/Check";
 import moment from "moment";
 import firebase from 'firebase/app';
@@ -285,10 +287,10 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 22`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br />If there are already {MAX_PEOPLE} players signed up, you can register and be put on the waitlist. The first 16 slots are on a first come first serve basis, the last 4 spots we will randomly pick from the waitlist.</Toast>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br />If there are already {MAX_PEOPLE} players signed up, you can register and be put on the waitlist. The first 16 slots are on a first come first serve basis, the last 6 spots we will randomly pick from the waitlist.</Toast>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
                   if (user.onWaitList) {
@@ -317,7 +319,6 @@ const Dashboard = () => {
                             <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
                             <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
                               setModal(!modal);
-                              document.querySelector("[role='dialog']")?.scrollIntoView({ behavior  : "smooth "});
                             }}>Check in</Button>
                             </>
                           )}
@@ -333,9 +334,15 @@ const Dashboard = () => {
         </>
       )}
 
-      <Modal isOpen={modal} onClose={() => setModal(!modal)}>
-        <Modal.Header>Check in for Tuesday, {getNextTuesdayReadable()}</Modal.Header>
-        <Modal.Content>
+
+      <Panel isOpen={modal} onClose={() => setModal(!modal)} width="80%">
+        <Panel.Overlay />
+        <Panel.Header>Check in</Panel.Header>
+        <Panel.Content>
+          <Heading level={2}>Tuesday, {getNextTuesdayReadable()}</Heading>
+          <hr />
+          <br />
+          <br />
           <Fieldset>
             <Label>In the past 14 days, have you experienced any COVID-19 symptoms.</Label>
             <Content>
@@ -383,12 +390,12 @@ const Dashboard = () => {
               )}
             </Content>
           </Fieldset>
-        </Modal.Content>
-        <Modal.Footer>
+        </Panel.Content>
+        <Panel.Footer>
           <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0)} onClick={() => checkIn()}>Check in</Button>
           <Button kind="minor" onClick={() => setModal(!modal)}>Cancel</Button>
-        </Modal.Footer>
-      </Modal>
+        </Panel.Footer>
+      </Panel>
     </div>
   );
 };
