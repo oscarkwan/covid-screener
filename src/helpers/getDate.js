@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-export function getNextTuesday() {
-  const dayINeed = 2; // for Tuesday
+export function getNextDate(dateNum) {
+  const dayINeed = dateNum; // for Tuesday
   const today = moment().isoWeekday();
 
   // if we haven't yet passed the day of the week that I need:

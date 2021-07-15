@@ -19,12 +19,12 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
 
-import { getNextTuesday, getNextTuesdayReadable } from "../../helpers/getDate";
+import { getNextDate, getNextTuesdayReadable } from "../../helpers/getDate";
 import './Dashboard.css';
 
 const { Label, Content } = Fieldset;
 
-const MAX_PEOPLE = 16;
+const MAX_PEOPLE = 12;
 
 const db = firebase.firestore();
 const batch = db.batch();
@@ -69,7 +69,7 @@ const Dashboard = () => {
   const userFirebase = firebase.auth().currentUser;
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
+    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').get().then((querySnapshot => {
       const usersArr = [];
       querySnapshot.forEach((doc) => {
         usersArr.push(doc.data());
@@ -89,7 +89,7 @@ const Dashboard = () => {
   }, []);
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
+    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
       if(doc) {
         setBeastUser(doc.data());
       }
@@ -103,7 +103,7 @@ const Dashboard = () => {
 
   function checkIn() {
     setIsLoading(true);
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).update({
+    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).update({
       checkedIn: true,
     })
     .then(() => {
@@ -123,7 +123,7 @@ const Dashboard = () => {
       (doc) => {
         const actualData = doc.data();
 
-        db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+        db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).set({
           uid: actualData.uid,
           firstLastName: actualData.firstLastName,
           email: actualData.email,
@@ -155,7 +155,7 @@ const Dashboard = () => {
       (doc) => {
         const actualData = doc.data();
 
-        db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+        db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).set({
           uid: actualData.uid,
           firstLastName: actualData.firstLastName,
           email: actualData.email,
@@ -185,7 +185,7 @@ const Dashboard = () => {
   };
 
   const handleRemove = () => {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
+    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
       setOpenToast({ open: true, message: "You successfully unregistered for this basketball session.", kind: 'success'});
       setRefresh(!refresh);
     }).catch((error => {
@@ -199,7 +199,7 @@ const Dashboard = () => {
     
     userCollection.where("role", "==", "Church member").get().then((querySnapshot) => {
       querySnapshot.docs.forEach((doc) => {
-        const docRef = db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(doc.data().uid);
+        const docRef = db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(doc.data().uid);
         batch.set(docRef, doc.data())
       });
 
@@ -242,7 +242,7 @@ const Dashboard = () => {
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
-        <Heading level={2} displayLevel={4}>Upcoming Tuesday, {getNextTuesdayReadable()}</Heading>
+        <Heading level={2} displayLevel={4}>Upcoming {getNextTuesdayReadable()}</Heading>
         <div>
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
@@ -288,7 +288,7 @@ const Dashboard = () => {
                 <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br />If there are already {MAX_PEOPLE} players signed up, you can register and be put on the waitlist. The first 16 slots are on a first come first serve basis, the last 4 spots we will randomly pick from the waitlist.</Toast>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br /></Toast>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
                   if (user.onWaitList) {
