@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "covid-screener-17547"
+    "default": "rgac-register",
+    "rgac-register": "rgac-register"
   }
 }
