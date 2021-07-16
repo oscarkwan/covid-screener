@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export function getNextTuesday() {
-  const dayINeed = 2; // for Tuesday
+  const dayINeed = 7; // for Tuesday
   const today = moment().isoWeekday();
 
   // if we haven't yet passed the day of the week that I need:
@@ -14,8 +14,8 @@ export function getNextTuesday() {
   }
 }
 
-export function getNextTuesdayReadable() {
-  const dayINeed = 2; // for Tuesday
+export function getNextSundayReadable() {
+  const dayINeed = 7; // for Tuesday
   const today = moment().isoWeekday();
 
   // if we haven't yet passed the day of the week that I need:

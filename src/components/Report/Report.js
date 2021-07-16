@@ -5,7 +5,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
 
-import { getNextTuesday, getNextTuesdayReadable } from "../../helpers/getDate";
+import { getNextTuesday, getNextSundayReadable } from "../../helpers/getDate";
 
 const db = firebase.firestore();
 
@@ -29,7 +29,7 @@ function Report() {
   }
   return (
     <>
-      <Heading level={1}>Report for {getNextTuesdayReadable()}</Heading>
+      <Heading level={1}>Report for {getNextSundayReadable()}</Heading>
       {users ? (
         <Table data={sortUsers()}>
           <Table.ColumnDefinition header="First and Last Name" cell="firstLastName" />
