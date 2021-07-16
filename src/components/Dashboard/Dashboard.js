@@ -247,7 +247,7 @@ const Dashboard = () => {
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
           )}
-          {!beastUser?.isRegistered && eventUsers?.length > 0 && (
+          {!beastUser?.isRegistered && eventUsers?.length > 0 && eventUsers?.length < MAX_PEOPLE && (
             <Confirmation
               body="Are you sure you want to register for this upcoming session?"
               confirmLabel="Register"
@@ -282,7 +282,7 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total attendees: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
               </div>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
