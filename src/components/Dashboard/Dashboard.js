@@ -313,6 +313,7 @@ const Dashboard = () => {
                             <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
                             <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
                               setModal(!modal);
+                              window.scrollTo(0, 0);
                             }}>Check in</Button>
                             </>
                           )}
