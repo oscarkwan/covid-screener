@@ -223,7 +223,8 @@ const Dashboard = () => {
   }
 
   function isCheckInDisabled(user) {
-    return (moment().weekday() !== 7) || user.uid !== userFirebase.uid;
+    console.log(moment().weekday());
+    return (moment().weekday() !== 0) || user.uid !== userFirebase.uid;
   }
 
   function getNoWaitList() {
