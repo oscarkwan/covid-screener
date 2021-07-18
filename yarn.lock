@@ -2169,6 +2169,23 @@
     prop-types "^15.7.2"
     uuid "^8.3.2"
 
+"@paprika/takeover@^1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@paprika/takeover/-/takeover-1.0.12.tgz#dac589f9056ac8e0bbc33649b7ec7c56a07dc457"
+  integrity sha512-4oybMywQPqTV2KEdUqA1Trgr88otAiDzOUo/DRS19ukJFWO8sroXtBQmI1HZmLQ8LK/WDFg+qHv1jkenkk1sDg==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/button" "^1.1.1"
+    "@paprika/constants" "^1.0.0"
+    "@paprika/heading" "^1.0.6"
+    "@paprika/helpers" "^2.1.2"
+    "@paprika/overlay" "^1.0.7"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    prop-types "^15.7.2"
+    react-focus-lock "^2.2.1"
+    react-transition-group "^4.3.0"
+
 "@paprika/toast@^1.1.4":
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@paprika/toast/-/toast-1.1.4.tgz#5e7dd911b94986f693e8c1f36fea4be8ef3e4cdf"

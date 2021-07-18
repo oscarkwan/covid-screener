@@ -12,7 +12,7 @@ import Toast from "@paprika/toast";
 import NotificationCard from "@paprika/notification-card";
 import Radio from "@paprika/radio";
 import Pill from "@paprika/pill";
-import Panel from "@paprika/panel";
+import Takeover from "@paprika/takeover";
 import Check from "@paprika/icon/lib/Check";
 import moment from "moment";
 import firebase from 'firebase/app';
@@ -329,10 +329,9 @@ const Dashboard = () => {
       )}
 
 
-      <Panel isOpen={modal} onClose={() => setModal(!modal)} width="80%">
-        <Panel.Overlay />
-        <Panel.Header>Check in</Panel.Header>
-        <Panel.Content>
+      <Takeover isOpen={modal} onClose={() => setModal(!modal)} width="80%">
+        <Takeover.Header>Check in</Takeover.Header>
+        <Takeover.Content>
           <Heading level={2}>Sunday, {getNextSundayReadable()}</Heading>
           <hr />
           <br />
@@ -384,12 +383,11 @@ const Dashboard = () => {
               )}
             </Content>
           </Fieldset>
-        </Panel.Content>
-        <Panel.Footer>
+          <br /><br />
           <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0)} onClick={() => checkIn()}>Check in</Button>
           <Button kind="minor" onClick={() => setModal(!modal)}>Cancel</Button>
-        </Panel.Footer>
-      </Panel>
+        </Takeover.Content>
+      </Takeover>
     </div>
   );
 };
