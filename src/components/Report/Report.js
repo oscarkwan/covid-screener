@@ -16,9 +16,9 @@ function Report() {
     db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
       const usersArr = [];
       querySnapshot.forEach((doc) => {
-        // if(doc.data().checkedIn) {
+        if(doc.data().checkedIn) {
           usersArr.push(doc.data());
-        // }
+        }
       });
       setUsers(usersArr);
     }))
