@@ -16,9 +16,9 @@ function Report() {
     db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
       const usersArr = [];
       querySnapshot.forEach((doc) => {
-        if(doc.data().checkedIn) {
+        // if(doc.data().checkedIn) {
           usersArr.push(doc.data());
-        }
+        // }
       });
       setUsers(usersArr);
     }))
@@ -27,6 +27,13 @@ function Report() {
   function sortUsers() {
     return users.sort((a, b) => a.firstLastName.localeCompare(b.firstLastName));
   }
+
+  function getNoWaitList() {
+    const hello = users.map(blah => blah.familyMembers);
+    const numberOfFamilyMembers = (hello.filter((el) => el !== undefined).flat().length)
+    return users?.length + numberOfFamilyMembers;
+  }
+
   return (
     <>
       <Heading level={1}>Report for {getNextSundayReadable()}</Heading>
@@ -35,11 +42,15 @@ function Report() {
           <Table.ColumnDefinition header="First and Last Name" cell="firstLastName" />
           <Table.ColumnDefinition header="Phone Number" cell="phoneNumber" />
           <Table.ColumnDefinition header="Email Address" cell="email" />
-          <Table.ColumnDefinition header="Role" cell="role" />
+          <Table.ColumnDefinition header="Family Members" cell={props => {
+            if (props.row?.familyMembers) {
+              return props.row?.familyMembers.map(fam => <span>{fam}, </span>);
+            }
+          }} />
         </Table>
       ) : null}
       {users ? (
-        <p>Total users: {users.length}</p>
+        <p>Total attendees: {getNoWaitList()}</p>
       ) : null}
     </>
   )
