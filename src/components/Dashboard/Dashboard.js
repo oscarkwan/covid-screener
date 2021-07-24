@@ -329,6 +329,12 @@ const Dashboard = () => {
               <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
+
+          {beastUser?.isRegistered && (
+            <Button icon={<Add />} onClick={toggleSidePanel}>
+              Add family members
+            </Button>
+          )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
         </div>        
       </header>
@@ -376,12 +382,6 @@ const Dashboard = () => {
                             <Avatar backgroundColor={getAvatarColors(user.firstLastName).backgroundColor} color={getAvatarColors(user.firstLastName).fontColor} isRound size="large">
                               {getInitialsFromText(user.firstLastName, 2).toUpperCase()}
                             </Avatar> {user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}
-
-                            {user?.familyMembers && (
-                              <Button icon={<Add />} onClick={toggleSidePanel}>
-                                Add Family
-                              </Button>
-                            )}
                           </Card.Title>
 
                           {user?.familyMembers && (
