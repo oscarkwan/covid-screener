@@ -7,6 +7,7 @@
     "@paprika/button": "^1.1.0",
     "@paprika/card": "^1.0.7",
     "@paprika/checkbox": "^1.0.10",
+    "@paprika/collapsible": "^1.1.10",
     "@paprika/counter": "^1.0.7",
     "@paprika/form-element": "^4.0.14",
     "@paprika/heading": "^1.0.6",

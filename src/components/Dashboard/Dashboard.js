@@ -6,25 +6,32 @@ import { getAvatarColors, getInitialsFromText } from '@paprika/avatar/lib/helper
 import Card from "@paprika/card";
 import Confirmation from "@paprika/confirmation";
 import Counter from "@paprika/counter";
+import FormElement from "@paprika/form-element";
 import Heading from "@paprika/heading";
 import Button from "@paprika/button";
 import Toast from "@paprika/toast";
 import NotificationCard from "@paprika/notification-card";
 import Radio from "@paprika/radio";
 import Pill from "@paprika/pill";
+import Panel from "@paprika/panel";
+import Input from "@paprika/input";
 import Takeover from "@paprika/takeover";
 import Check from "@paprika/icon/lib/Check";
+import Add from "@paprika/icon/lib/Add";
+import Times from "@paprika/icon/lib/Times";
 import moment from "moment";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
+
+import CollapsibleFamily from './CollapsibleFamily';
 
 import { getNextTuesday, getNextSundayReadable } from "../../helpers/getDate";
 import './Dashboard.css';
 
 const { Label, Content } = Fieldset;
 
-const MAX_PEOPLE = 20;
+const MAX_PEOPLE = 30;
 
 const db = firebase.firestore();
 const batch = db.batch();
@@ -60,10 +67,13 @@ const Dashboard = () => {
   const [formValues, setFormValues] = React.useState([0, 0, 0]);
   const [currentUser, setCurrentUser] = React.useState(null);
   const [beastUser, setBeastUser] = React.useState(null);
+  const [familyMembers, setFamilyMembers] = React.useState([]);
+  const [tempFamilyMember, setTempFamilyMember] = React.useState(null);
   const [eventUsers, setEventUsers] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [refresh, setRefresh] = React.useState(false);
   const [modal, setModal] = React.useState(false);
+  const [isOpenSidePanel, setIsOpenSidePanel] = React.useState(false);
   const [isOpenToast, setOpenToast] = React.useState({ open: false, message: '', kind: 'success' });
 
   const userFirebase = firebase.auth().currentUser;
@@ -85,6 +95,12 @@ const Dashboard = () => {
 
       setCurrentUser(...foundU);
     });
+
+    db.collection('userCollection').doc(userFirebase?.uid).get().then((doc => {
+      if(doc.data()?.familyMembers) {
+        setFamilyMembers(doc.data()?.familyMembers);
+      }
+    }))
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -96,6 +112,17 @@ const Dashboard = () => {
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // React.useEffect(() => {
+  //   db.collection('userCollection').doc(currentUser?.uid).get().then((doc => {
+  //     if(doc.data()?.familyMembers) {
+  //       console.log(doc.data()?.familyMembers);
+  //       setFamilyMembers(doc.data()?.familyMembers);
+  //     }
+  //     setRefresh(!refresh);
+  //   }))
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   if (!userFirebase) {
     return <Redirect to="/login" />;
@@ -116,6 +143,10 @@ const Dashboard = () => {
     });
   }
 
+  const toggleSidePanel = () => {
+    setIsOpenSidePanel(!isOpenSidePanel);
+  }
+
   const register = handleCloseConfirm => {
     setIsLoading(true);
 
@@ -129,6 +160,7 @@ const Dashboard = () => {
           email: actualData.email,
           phoneNumber: actualData.phoneNumber,
           role: actualData.role,
+          familyMembers: actualData.familyMembers,
           checkedIn: false,
           isRegistered: true,
           onWaitList: false,
@@ -194,6 +226,46 @@ const Dashboard = () => {
     }))
   };
 
+  function saveFamilyMembers() {
+    const userCollection = db.collection('userCollection');
+
+    userCollection.doc(userFirebase.uid).update({
+      familyMembers: [...familyMembers, tempFamilyMember],
+    });
+
+    userCollection.doc(userFirebase?.uid).get().then((doc => {
+      if(doc.data()?.familyMembers) {
+        setFamilyMembers(doc.data()?.familyMembers);
+      }
+    }));
+
+    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).update({
+      familyMembers: [...familyMembers, tempFamilyMember],
+    });
+
+    setTempFamilyMember(null);
+  }
+
+  function removeFamilyMember(fam) {
+    const userCollection = db.collection('userCollection');
+
+    const newFamily = familyMembers.filter(f => !f.includes(fam));
+
+    userCollection.doc(userFirebase.uid).update({
+      familyMembers: newFamily
+    });
+
+    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).update({
+      familyMembers: newFamily,
+    });
+
+    userCollection.doc(userFirebase?.uid).get().then((doc => {
+      if(doc.data()?.familyMembers) {
+        setFamilyMembers(doc.data()?.familyMembers);
+      }
+    }))
+  }
+
   function registerAllChurchMembers() {
     const userCollection = db.collection('userCollection');
     
@@ -223,12 +295,13 @@ const Dashboard = () => {
   }
 
   function isCheckInDisabled(user) {
-    console.log(moment().weekday());
     return (moment().weekday() !== 0) || user.uid !== userFirebase.uid;
   }
 
   function getNoWaitList() {
-    return eventUsers?.length;
+    const hello = eventUsers.map(blah => blah.familyMembers);
+    const numberOfFamilyMembers = (hello.filter((el) => el !== undefined).flat().length)
+    return eventUsers?.length + numberOfFamilyMembers;
   }
 
   return (
@@ -253,7 +326,7 @@ const Dashboard = () => {
               body="Are you sure you want to register for this upcoming session?"
               confirmLabel="Register"
               onConfirm={register}>
-              <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
+              <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
           )}
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
@@ -283,7 +356,7 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total attendees: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total attendees: <Counter size="large" quantity={`${getNoWaitList()} / 30`} /></Heading>
               </div>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
@@ -297,13 +370,23 @@ const Dashboard = () => {
                         className={user.uid === userFirebase.uid ? 'current-user' : ''}
                       >
                         <Card.Header>
-                          <Avatar backgroundColor={getAvatarColors(user.firstLastName).backgroundColor} color={getAvatarColors(user.firstLastName).fontColor} isRound size="large">
-                            {getInitialsFromText(user.firstLastName, 2).toUpperCase()}
-                          </Avatar>
                         </Card.Header>
                         <Card.Content>
-                          <Card.Title>{user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}</Card.Title>
-                          {/* <Card.Metadata><Pill pillColor={getPillColor(user)}>{user.role}</Pill></Card.Metadata> */}
+                          <Card.Title>
+                            <Avatar backgroundColor={getAvatarColors(user.firstLastName).backgroundColor} color={getAvatarColors(user.firstLastName).fontColor} isRound size="large">
+                              {getInitialsFromText(user.firstLastName, 2).toUpperCase()}
+                            </Avatar> {user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}
+
+                            {user?.familyMembers && (
+                              <Button icon={<Add />} onClick={toggleSidePanel}>
+                                Add Family
+                              </Button>
+                            )}
+                          </Card.Title>
+
+                          {user?.familyMembers && (
+                            <CollapsibleFamily familyMembers={user.familyMembers} />
+                          )}
                         </Card.Content>
                         <Card.Footer style={{"height": "60px"}}>
                           {user.checkedIn ? (
@@ -313,7 +396,7 @@ const Dashboard = () => {
                             <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
                             <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
                               setModal(!modal);
-                              window.scrollTo(0, 0);
+                              setTimeout(window.scrollTo(0, 0), 100);
                             }}>Check in</Button>
                             </>
                           )}
@@ -329,13 +412,67 @@ const Dashboard = () => {
         </>
       )}
 
+      <Panel isOpen={isOpenSidePanel} onClose={toggleSidePanel} width="66%">
+        <Panel.Overlay />
+        <Panel.Header>Adding family members</Panel.Header>
+        <Panel.Content>
+          {familyMembers.length === 0 && (
+            <NotificationCard className="bubbly">
+              <NotificationCard.Image>
+                <svg
+                  style={{ width: "100%" }}
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: bubblieString }}
+                  version="1.1"
+                  viewBox="0 0 150 150"
+                  xmlns="http://www.w3.org/2000/svg"
+                />
+              </NotificationCard.Image>
+              <NotificationCard.Header level={2}>No Family members have been added</NotificationCard.Header>
+              <NotificationCard.Body>
+                Follow the form below to add family members
+              </NotificationCard.Body>
+            </NotificationCard>
+          )}
+
+          {familyMembers?.map((familyMember) => (
+            <Card size="small" >
+              <Card.Header>
+              </Card.Header>
+              <Card.Content>
+                <Card.Title>
+                  <Avatar isRound size="large">
+                  {getInitialsFromText(familyMember, 2).toUpperCase()}
+                  </Avatar> {familyMember}
+                  <Button.Close onClick={() => removeFamilyMember(familyMember)}/>
+                </Card.Title>
+              </Card.Content>
+            </Card>         
+          ))}
+ 
+
+          <div className="family-member-form">
+            <FormElement isRequired size={FormElement.types.size.LARGE} width="33%">
+              <FormElement.Label>First and last name</FormElement.Label>
+              <FormElement.Content>
+                {a11yProps => (
+                  <>
+                    <Input size={Input.types.size.LARGE} onChange={e => setTempFamilyMember(e.target.value)}/>
+                    <br />
+                    <Button isDisabled={tempFamilyMember === null} onClick={() => saveFamilyMembers()}>Add family member</Button>
+                  </>
+                )}
+              </FormElement.Content>
+            </FormElement>
+          </div>    
+        </Panel.Content>
+      </Panel>
 
       <Takeover isOpen={modal} onClose={() => setModal(!modal)} width="80%">
         <Takeover.Header>Check in</Takeover.Header>
         <Takeover.Content>
           <Heading level={2}>Sunday, {getNextSundayReadable()}</Heading>
           <hr />
-          <br />
           <br />
           <Fieldset>
             <Label>In the past 14 days, have you experienced any COVID-19 symptoms.</Label>
@@ -384,7 +521,7 @@ const Dashboard = () => {
               )}
             </Content>
           </Fieldset>
-          <br /><br />
+          <br />
           <Button isPending={isLoading} kind="primary" isDisabled={formValues.includes(0)} onClick={() => checkIn()}>Check in</Button>
           <Button kind="minor" onClick={() => setModal(!modal)}>Cancel</Button>
         </Takeover.Content>

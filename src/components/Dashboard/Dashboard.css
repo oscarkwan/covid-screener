@@ -10,6 +10,32 @@ ul {
     font-size: 26px;
   }
 
+  .family-card ul {
+    margin-top: 6px;
+  }
+
+  .family-card li {
+    list-style-type: disc;
+    margin-bottom: 4px !important;
+    margin-left: 38px;
+  }
+    
+  li [data-pka-anchor='card'] {
+    width: 100% !important;
+  }
+
+
+  [data-pka-anchor='panel.content'] [data-pka-anchor='card'] {
+    width: 100% !important;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  .family-member-form {
+    width: 100% !important;
+    margin-top: 24px;
+  }
+
   ul {
     flex-direction: column;
   }
@@ -61,11 +87,12 @@ ul li {
   list-style-type: none;
   margin-right: 32px;
   margin-bottom: 24px;
-  width: 230px;
+  width: 300px;
 }
 
 [data-pka-anchor="avatar"] {
   height: 32px !important;
+  margin-right: 6px;
 }
 
 header {
@@ -109,11 +136,27 @@ fieldset {
   height: auto !important;
 }
 
+[data-pka-anchor='panel.content'] [data-pka-anchor='card'] {
+  margin-right: 12px;
+}
+
+[data-pka-anchor='card.title'] {
+  display: flex;
+  align-items: center;
+}
+
+[data-pka-anchor='card.title'] [data-pka-anchor='button'] {
+  margin-left: auto;
+}
+
 [data-pka-anchor='pill'] {
   padding: 0 16px !important;
   margin-top: 8px !important;
 }
 
+[data-pka-anchor='takeover'], [data-pka-anchor='takeover.overlay'] {
+  height: 100vh !important;
+}
 .check-in-button {
   margin-left: 8px;
 }
@@ -142,4 +185,26 @@ fieldset {
 
 [data-pka-anchor='popover.card'] {
   font-family: 'Arial';
+}
+
+.family-member-form {
+  width: 50%;
+  margin-top: 24px;
+}
+
+.family-card {
+  margin-top: 8px;
+}
+
+.family-card ul {
+  margin-top: 6px;
+}
+.family-card li {
+  list-style-type: disc;
+  margin-bottom: 4px;
+  margin-left: 38px;
+}
+
+[data-pka-anchor='card'] {
+  width: 315px !important;
 }

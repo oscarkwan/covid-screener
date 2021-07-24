@@ -1889,6 +1889,19 @@
     prop-types "^15.7.2"
     uuid "^8.3.2"
 
+"@paprika/collapsible@^1.1.10":
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/@paprika/collapsible/-/collapsible-1.1.10.tgz#df887ee4cdc09594a8913986a1a2350640443f5d"
+  integrity sha512-9vojKwAwNy/XUyRMPAkSyhOi9S35uEq/WPmFIApnKiK0p7X6SHxpj11+pp+katTMuR0EzZEgAOsz6FNoN0dDrg==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.3.1"
+    "@paprika/icon" "^1.2.0"
+    "@paprika/raw-button" "^1.0.4"
+    "@paprika/stylers" "^1.0.0"
+    "@paprika/tokens" "^1.0.0"
+    class-names "^1.0.0"
+    prop-types "^15.7.2"
+
 "@paprika/confirmation@^1.1.5":
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/@paprika/confirmation/-/confirmation-1.1.5.tgz#75f683afc6d4749c972d83749b97db2f4191dd75"
