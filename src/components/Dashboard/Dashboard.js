@@ -330,11 +330,9 @@ const Dashboard = () => {
             </Confirmation>
           )}
 
-          {beastUser?.isRegistered && (
-            <Button icon={<Add />} onClick={toggleSidePanel}>
-              Add family members
-            </Button>
-          )}
+          <Button icon={<Add />} onClick={toggleSidePanel}>
+            Add family members
+          </Button>
           {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
         </div>        
       </header>
