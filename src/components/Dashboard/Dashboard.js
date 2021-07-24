@@ -384,7 +384,7 @@ const Dashboard = () => {
                             </Avatar> {user.firstLastName} {user.uid === userFirebase.uid ? '(you)' : ''}
                           </Card.Title>
 
-                          {user?.familyMembers && (
+                          {user?.familyMembers?.length > 0 && (
                             <CollapsibleFamily familyMembers={user.familyMembers} />
                           )}
                         </Card.Content>
