@@ -160,7 +160,7 @@ const Dashboard = () => {
           email: actualData.email,
           phoneNumber: actualData.phoneNumber,
           role: actualData.role,
-          familyMembers: actualData.familyMembers,
+          familyMembers: actualData?.familyMembers ? actualData?.familyMembers: [],
           checkedIn: false,
           isRegistered: true,
           onWaitList: false,
