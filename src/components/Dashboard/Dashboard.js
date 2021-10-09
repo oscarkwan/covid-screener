@@ -12,13 +12,11 @@ import Button from "@paprika/button";
 import Toast from "@paprika/toast";
 import NotificationCard from "@paprika/notification-card";
 import Radio from "@paprika/radio";
-import Pill from "@paprika/pill";
 import Panel from "@paprika/panel";
 import Input from "@paprika/input";
 import Takeover from "@paprika/takeover";
 import Check from "@paprika/icon/lib/Check";
 import Add from "@paprika/icon/lib/Add";
-import Times from "@paprika/icon/lib/Times";
 import moment from "moment";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -26,7 +24,7 @@ import "firebase/auth";
 
 import CollapsibleFamily from './CollapsibleFamily';
 
-import { getNextTuesday, getNextSundayReadable } from "../../helpers/getDate";
+import { getNextTuesday, getNextSaturday, getNextSundayReadable, getNextSaturdayReadable } from "../../helpers/getDate";
 import './Dashboard.css';
 
 const { Label, Content } = Fieldset;
@@ -74,19 +72,30 @@ const Dashboard = () => {
   const [refresh, setRefresh] = React.useState(false);
   const [modal, setModal] = React.useState(false);
   const [isOpenSidePanel, setIsOpenSidePanel] = React.useState(false);
+  const [isSaturday, setIsSaturday] = React.useState(false);
   const [isOpenToast, setOpenToast] = React.useState({ open: false, message: '', kind: 'success' });
 
   const userFirebase = firebase.auth().currentUser;
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
-      const usersArr = [];
-      querySnapshot.forEach((doc) => {
-        usersArr.push(doc.data());
-      });
-      setEventUsers(usersArr);
-    }))
-  }, [refresh]);
+    if (isSaturday) {
+      db.collection("events").doc(getNextSaturday().split(' ').join('')).collection('users').get().then((querySnapshot => {
+        const usersArr = [];
+        querySnapshot.forEach((doc) => {
+          usersArr.push(doc.data());
+        });
+        setEventUsers(usersArr);
+      }))
+    } else {
+      db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
+        const usersArr = [];
+        querySnapshot.forEach((doc) => {
+          usersArr.push(doc.data());
+        });
+        setEventUsers(usersArr);
+      }))
+    }
+  }, [refresh, isSaturday]);
 
   React.useEffect(() => {
     db.collection("userCollection").get().then((doc) => {
@@ -105,13 +114,21 @@ const Dashboard = () => {
   }, []);
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
-      if(doc) {
-        setBeastUser(doc.data());
-      }
-    });
+    if(isSaturday) {
+      db.collection("events").doc(getNextSaturday().split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
+        if(doc) {
+          setBeastUser(doc.data());
+        }
+      });
+    } else {
+      db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
+        if(doc) {
+          setBeastUser(doc.data());
+        }
+      });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isSaturday]);
 
   // React.useEffect(() => {
   //   db.collection('userCollection').doc(currentUser?.uid).get().then((doc => {
@@ -180,6 +197,40 @@ const Dashboard = () => {
     );
   };
 
+
+  const registerSaturday = handleCloseConfirm => {
+    setIsLoading(true);
+
+    db.collection('userCollection').doc(userFirebase.uid).get().then(
+      (doc) => {
+        const actualData = doc.data();
+
+        db.collection("events").doc(getNextSaturday().split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+          uid: actualData.uid,
+          firstLastName: actualData.firstLastName,
+          email: actualData.email,
+          phoneNumber: actualData.phoneNumber,
+          role: actualData.role,
+          familyMembers: actualData?.familyMembers ? actualData?.familyMembers: [],
+          checkedIn: false,
+          isRegistered: true,
+          onWaitList: false,
+        })
+        .then(() => {
+            setIsLoading(false);
+            setOpenToast({ open: true, message: "You successfully registered for this session.", kind: 'success'});
+            setRefresh(!refresh);
+            handleCloseConfirm();
+        })
+        .catch((error) => {
+            setIsLoading(false);
+            setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
+            handleCloseConfirm();
+        });
+      }
+    );
+  };
+
   const registerWaitlist = () => {
     setIsLoading(true);
 
@@ -214,6 +265,16 @@ const Dashboard = () => {
     const newItems = [...formValues];
     newItems[position] = activeIndex;
     setFormValues(newItems);
+  };
+
+  const handleRemoveSaturday = () => {
+    db.collection("events").doc(getNextSaturday().split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
+      setOpenToast({ open: true, message: "You successfully unregistered for this session.", kind: 'success'});
+      setRefresh(!refresh);
+    }).catch((error => {
+      setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
+      setRefresh(!refresh);
+    }))
   };
 
   const handleRemove = () => {
@@ -271,8 +332,13 @@ const Dashboard = () => {
     
     userCollection.where("role", "==", "Church member").get().then((querySnapshot) => {
       querySnapshot.docs.forEach((doc) => {
-        const docRef = db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(doc.data().uid);
-        batch.set(docRef, doc.data())
+        if(isSaturday) {
+          const docRef2 = db.collection("events").doc(getNextSaturday().split(' ').join('')).collection('users').doc(doc.data().uid);
+          batch.set(docRef2, doc.data());
+        } else {
+          const docRef = db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(doc.data().uid);
+          batch.set(docRef, doc.data());
+        }
       });
 
       batch.commit();
@@ -280,14 +346,8 @@ const Dashboard = () => {
     });
   }
 
-  function getPillColor(user) {
-    if (user.role === 'Church member') {
-      return Pill.types.color.BLUE;
-    } else if (user.role === 'Regular') {
-      return Pill.types.color.LIGHT_BLUE;
-    } else {
-      return Pill.types.color.GREY;
-    }
+  function switchSaturday() {
+    setIsSaturday(!isSaturday);
   }
 
   function sortedEventUsers() {
@@ -295,7 +355,10 @@ const Dashboard = () => {
   }
 
   function isCheckInDisabled(user) {
-    return (moment().weekday() !== 0) || user.uid !== userFirebase.uid;
+    if (isSaturday) {
+      return (moment().weekday() !== 6) || user.uid !== userFirebase.uid;
+    }
+    return (moment().weekday() !== 3) || user.uid !== userFirebase.uid;
   }
 
   function getNoWaitList() {
@@ -311,23 +374,45 @@ const Dashboard = () => {
           {isOpenToast.message}
         </Toast>
       )}
-      <Heading level={1} className="title">RGAC Sunday Service</Heading>
+      <div className="dashboad-header-lah">
+        <Heading level={1} className="title">{`RGAC ${isSaturday ? 'Saturday' : 'Wednesday'} Badminton`}</Heading>
+        {isSaturday ? (
+          <Button kind="primary" onClick={() => switchSaturday()}>Switch to Wednesday</Button>
+        ) : (
+          <Button kind="primary" onClick={() => switchSaturday()}>Switch to Saturday</Button>
+        )}
+      </div>
       <header>
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
-        <Heading level={2} displayLevel={4}>Upcoming Sunday, {getNextSundayReadable()}</Heading>
+        {isSaturday ? (
+          <Heading level={2} displayLevel={4}>Upcoming Saturday, {getNextSaturdayReadable()}</Heading>
+        ) : (
+          <Heading level={2} displayLevel={4}>Upcoming Wednesday, {getNextSundayReadable()}</Heading>
+        )}
         <div>
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
           )}
-          {!beastUser?.isRegistered && eventUsers?.length > 0 && eventUsers?.length < MAX_PEOPLE && (
+          {isSaturday ? (
+            !beastUser?.isRegistered && eventUsers?.length > 0 && eventUsers?.length < MAX_PEOPLE && (
+              <Confirmation
+                body="Are you sure you want to register for this upcoming Saturday session?"
+                confirmLabel="Register"
+                onConfirm={registerSaturday}>
+                <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
+              </Confirmation>
+            )
+          ) : (
+            !beastUser?.isRegistered && eventUsers?.length > 0 && eventUsers?.length < MAX_PEOPLE && (
             <Confirmation
-              body="Are you sure you want to register for this upcoming session?"
+              body="Are you sure you want to register for this upcoming Wednesday session?"
               confirmLabel="Register"
               onConfirm={register}>
               <Confirmation.TriggerButton className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
             </Confirmation>
+          )
           )}
 
           <Button icon={<Add />} onClick={toggleSidePanel}>
@@ -338,6 +423,7 @@ const Dashboard = () => {
       </header>
       
       <hr />
+
       {eventUsers && (
         <>
           {eventUsers.length === 0 ? (
@@ -360,7 +446,7 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total attendees: <Counter size="large" quantity={`${getNoWaitList()} / 30`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total attendees: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
               </div>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
@@ -391,7 +477,7 @@ const Dashboard = () => {
                             <p className="check-in-button checked-in"><Check /> Checked In</p>
                           ) : ( 
                             <>
-                            <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
+                            <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => isSaturday ? handleRemoveSaturday() : handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
                             <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
                               setModal(!modal);
                               setTimeout(window.scrollTo(0, 0), 100);

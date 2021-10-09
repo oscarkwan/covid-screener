@@ -1,6 +1,5 @@
 {
   "projects": {
-    "default": "rgac-register",
-    "rgac-register": "rgac-register"
+    "default": "rgac-badminton"
   }
 }

@@ -208,3 +208,9 @@ fieldset {
 [data-pka-anchor='card'] {
   width: 315px !important;
 }
+
+.dashboad-header-lah {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

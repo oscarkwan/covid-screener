@@ -2,11 +2,11 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 export const config = firebase.initializeApp({
-  apiKey: "AIzaSyC8A64s-sWLIp_F6n7MSn94igXeizkbguA",
-  authDomain: "rgac-register.firebaseapp.com",
-  projectId: "rgac-register",
-  storageBucket: "rgac-register.appspot.com",
-  messagingSenderId: "341429155397",
-  appId: "1:341429155397:web:389319eaa903d119b3d52c",
-  measurementId: "G-XJ111S01WL"
+  apiKey: "AIzaSyBMEeiu1CpJxlBtG_aDMA4l3_c1VNe4Xlk",
+  authDomain: "rgac-badminton.firebaseapp.com",
+  projectId: "rgac-badminton",
+  storageBucket: "rgac-badminton.appspot.com",
+  messagingSenderId: "1069437650860",
+  appId: "1:1069437650860:web:e2c405a29095666523dc09",
+  measurementId: "G-SZ3MM2WEM1"
 });
