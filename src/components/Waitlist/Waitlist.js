@@ -6,7 +6,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
 
-import { getNextTuesday, getNextTuesdayReadable } from "../../helpers/getDate";
+import { getNextDate, getNextTuesdayReadable } from "../../helpers/getDate";
 
 const db = firebase.firestore();
 
@@ -15,7 +15,7 @@ function Report() {
   const [showToast, setShowToast] = React.useState(false);
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').get().then((querySnapshot => {
+    db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').get().then((querySnapshot => {
       const usersArr = [];
       querySnapshot.forEach((doc) => {
         if(doc.data().onWaitList) {
@@ -27,7 +27,7 @@ function Report() {
   }, []);
 
   function unWaitList(user) {
-    db.collection("events").doc(getNextTuesday().split(' ').join('')).collection('users').doc(user.uid).update({
+    db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(user.uid).update({
       onWaitList: false,
     }).then(() => {
       console.log('succcess');

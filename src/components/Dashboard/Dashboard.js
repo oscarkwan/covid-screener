@@ -12,7 +12,6 @@ import Toast from "@paprika/toast";
 import NotificationCard from "@paprika/notification-card";
 import Radio from "@paprika/radio";
 import Modal from "@paprika/modal";
-import Pill from "@paprika/pill";
 import Check from "@paprika/icon/lib/Check";
 import moment from "moment";
 import firebase from 'firebase/app';
@@ -69,7 +68,7 @@ const Dashboard = () => {
   const userFirebase = firebase.auth().currentUser;
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').get().then((querySnapshot => {
+    db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').get().then((querySnapshot => {
       const usersArr = [];
       querySnapshot.forEach((doc) => {
         usersArr.push(doc.data());
@@ -89,7 +88,7 @@ const Dashboard = () => {
   }, []);
 
   React.useEffect(() => {
-    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
+    db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(userFirebase.uid).get().then((doc) => {
       if(doc) {
         setBeastUser(doc.data());
       }
@@ -103,7 +102,7 @@ const Dashboard = () => {
 
   function checkIn() {
     setIsLoading(true);
-    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).update({
+    db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(userFirebase.uid).update({
       checkedIn: true,
     })
     .then(() => {
@@ -123,7 +122,7 @@ const Dashboard = () => {
       (doc) => {
         const actualData = doc.data();
 
-        db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+        db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(userFirebase.uid).set({
           uid: actualData.uid,
           firstLastName: actualData.firstLastName,
           email: actualData.email,
@@ -155,7 +154,7 @@ const Dashboard = () => {
       (doc) => {
         const actualData = doc.data();
 
-        db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).set({
+        db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(userFirebase.uid).set({
           uid: actualData.uid,
           firstLastName: actualData.firstLastName,
           email: actualData.email,
@@ -185,7 +184,7 @@ const Dashboard = () => {
   };
 
   const handleRemove = () => {
-    db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
+    db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
       setOpenToast({ open: true, message: "You successfully unregistered for this basketball session.", kind: 'success'});
       setRefresh(!refresh);
     }).catch((error => {
@@ -199,23 +198,13 @@ const Dashboard = () => {
     
     userCollection.where("role", "==", "Church member").get().then((querySnapshot) => {
       querySnapshot.docs.forEach((doc) => {
-        const docRef = db.collection("events").doc(getNextDate(3).split(' ').join('')).collection('users').doc(doc.data().uid);
+        const docRef = db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(doc.data().uid);
         batch.set(docRef, doc.data())
       });
 
       batch.commit();
       setRefresh(!refresh);
     });
-  }
-
-  function getPillColor(user) {
-    if (user.role === 'Church member') {
-      return Pill.types.color.BLUE;
-    } else if (user.role === 'Regular') {
-      return Pill.types.color.LIGHT_BLUE;
-    } else {
-      return Pill.types.color.GREY;
-    }
   }
 
   function sortedEventUsers() {
@@ -237,12 +226,12 @@ const Dashboard = () => {
           {isOpenToast.message}
         </Toast>
       )}
-      <Heading level={1} className="title">RGAC Badminton 🏸</Heading>
+      <Heading level={1} className="title">RGAC Volleyball</Heading>
       <header>
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
-        <Heading level={2} displayLevel={4}>Upcoming {getNextTuesdayReadable()}</Heading>
+        <Heading level={2} displayLevel={4}>Upcoming Sunday {getNextTuesdayReadable()}</Heading>
         <div>
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
@@ -288,7 +277,7 @@ const Dashboard = () => {
                 <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 20`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this tuesday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br /></Toast>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this Sunday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br /></Toast>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
                   if (user.onWaitList) {

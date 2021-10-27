@@ -7,10 +7,10 @@ export function getNextDate(dateNum) {
   // if we haven't yet passed the day of the week that I need:
   if (today <= dayINeed) { 
     // then just give me this week's instance of that day
-    return moment().isoWeekday(dayINeed).format('MM DD');
+    return moment().isoWeekday(dayINeed).format('MM DD YY');
   } else {
     // otherwise, give me *next week's* instance of that same day
-    return moment().add(1, 'weeks').isoWeekday(dayINeed).format('MM DD');
+    return moment().add(1, 'weeks').isoWeekday(dayINeed).format('MM DD YY');
   }
 }
 

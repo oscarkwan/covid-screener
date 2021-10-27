@@ -1,6 +1,8 @@
 {
   "projects": {
     "basketball": "covid-oscar",
-    "badminton": "rgac-badminton"
+    "badminton": "rgac-badminton",
+    "volleyball": "rgac-volleyball",
+    "default": "rgac-volleyball"
   }
 }

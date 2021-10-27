@@ -37,7 +37,7 @@ const Home = () => {
   return (
     <div className="home-page">
       <header>
-        <Heading level={1}>RGAC Badminton 🏸</Heading>
+        <Heading level={1}>RGAC Volleyball</Heading>
       </header>
       <FormElement size={FormElement.types.size.LARGE}>
         <Label>Email address</Label>
