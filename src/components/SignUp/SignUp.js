@@ -82,6 +82,7 @@ const SignUp = () => {
     <>
       <Heading level={1}>Sign Up</Heading>
       <form>
+        <p>Please note, you must be fully vaccinated to join us to play Volleyball</p>
         <FormElement isRequired size={FormElement.types.size.LARGE}>
           <Label>Email address</Label>
           <Content>
