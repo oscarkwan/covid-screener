@@ -212,7 +212,7 @@ const Dashboard = () => {
   }
 
   function isCheckInDisabled(user) {
-    return (moment().weekday() !== 2 && !moment().hour() < 17) || user.uid !== userFirebase.uid;
+    return (moment().weekday() !== 7 && !moment().hour() < 17) || user.uid !== userFirebase.uid;
   }
 
   function getNoWaitList() {
@@ -231,7 +231,7 @@ const Dashboard = () => {
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
-        <Heading level={2} displayLevel={4}>Upcoming Sunday {getNextTuesdayReadable()}</Heading>
+        <Heading level={2} displayLevel={4}>Upcoming Sunday {getNextTuesdayReadable()} (6:00 - 8:00 pm)</Heading>
         <div>
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
@@ -277,7 +277,7 @@ const Dashboard = () => {
                 <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 30`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this Sunday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. <br /><br /></Toast>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this Sunday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. Note that volleyball now starts at 6pm until 8pm.<br /><br /></Toast>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
                   if (user.onWaitList) {
@@ -306,7 +306,6 @@ const Dashboard = () => {
                             <Button kind={Button.types.kind.DESTRUCTIVE} size={Button.types.size.LARGE} onClick={() => handleRemove()} isDisabled={user.uid !== userFirebase.uid}>Unregister</Button>
                             <Button size={Button.types.size.LARGE} isDisabled={isCheckInDisabled(user)} className="check-in-button" kind="primary" onClick={() => { 
                               setModal(!modal);
-                              document.querySelector("[role='dialog']")?.scrollIntoView({ behavior  : "smooth "});
                             }}>Check in</Button>
                             </>
                           )}
@@ -323,7 +322,7 @@ const Dashboard = () => {
       )}
 
       <Modal isOpen={modal} onClose={() => setModal(!modal)}>
-        <Modal.Header>Check in for Tuesday, {getNextTuesdayReadable()}</Modal.Header>
+        <Modal.Header>Check in for Sunday, {getNextTuesdayReadable()}</Modal.Header>
         <Modal.Content>
           <Fieldset>
             <Label>In the past 14 days, have you experienced any COVID-19 symptoms.</Label>
