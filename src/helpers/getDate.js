@@ -15,7 +15,7 @@ export function getNextDate(dateNum) {
 }
 
 export function getNextTuesdayReadable() {
-  const dayINeed = 2; // for Tuesday
+  const dayINeed = 7; // for Tuesday
   const today = moment().isoWeekday();
 
   // if we haven't yet passed the day of the week that I need:

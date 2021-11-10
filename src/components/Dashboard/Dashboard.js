@@ -238,7 +238,7 @@ const Dashboard = () => {
           )}
           {!beastUser?.isRegistered && eventUsers?.length > 0 && (getNoWaitList() < MAX_PEOPLE) && (
             <Confirmation
-              body="Are you sure you want to register for this upcoming Tuesday's session?"
+              body="Are you sure you want to register for this upcoming Sundays's session?"
               confirmLabel="Register"
               onConfirm={register}>
               <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
@@ -247,7 +247,6 @@ const Dashboard = () => {
           {getNoWaitList() >= MAX_PEOPLE && !beastUser?.isRegistered && (
             <Button onClick={registerWaitlist} size={Button.types.size.LARGE} kind="primary" isDisabled={beastUser?.onWaitList}>{beastUser?.onWaitList ? 'Already on the waitlist ' : 'Register for the waitlist'}</Button>
           )}
-          {/* <Button onClick={() => config.auth().signOut().then(() => history.push('/'))}>Sign out</Button> */}
         </div>        
       </header>
       
