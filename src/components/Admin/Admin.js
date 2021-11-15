@@ -89,7 +89,7 @@ function Admin() {
             );
           }} />
         </Table>
-      ) :             <NotificationCard className="bubbly">
+      ) : <NotificationCard className="bubbly">
               <NotificationCard.Image>
                 <svg
                   style={{ width: "100%" }}
