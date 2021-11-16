@@ -243,7 +243,7 @@ const Dashboard = () => {
           )}
           {!beastUser?.isRegistered && eventUsers?.length > 0 && (getNoWaitList() < MAX_PEOPLE) && (
             <Confirmation
-              body="Are you sure you want to register for this upcoming Tuesday's session?"
+              body="Are you sure you want to register for this upcoming Sunday's session?"
               confirmLabel="Register"
               onConfirm={register}>
               <Confirmation.TriggerButton size={Button.types.size.LARGE} className="register-trigger" kind="primary" isDisabled={getNoWaitList() > MAX_PEOPLE}>Register</Confirmation.TriggerButton>
