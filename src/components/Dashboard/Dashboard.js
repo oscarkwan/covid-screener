@@ -139,7 +139,7 @@ const Dashboard = () => {
         })
         .then(() => {
             setIsLoading(false);
-            setOpenToast({ open: true, message: "You successfully registered for this basketball session.", kind: 'success'});
+            setOpenToast({ open: true, message: "You successfully registered for this session.", kind: 'success'});
             setRefresh(!refresh);
             handleCloseConfirm();
         })
@@ -171,7 +171,7 @@ const Dashboard = () => {
         })
         .then(() => {
             setIsLoading(false);
-            setOpenToast({ open: true, message: "You have signed up for the waitlist. You will be notified if you will play this tuesday.", kind: 'success'});
+            setOpenToast({ open: true, message: "You have signed up for the waitlist. You will be notified if you will play this Sunday.", kind: 'success'});
             setRefresh(!refresh);
         })
         .catch((error) => {
@@ -190,7 +190,7 @@ const Dashboard = () => {
 
   const handleRemove = () => {
     db.collection("events").doc(getNextDate(7).split(' ').join('')).collection('users').doc(userFirebase.uid).delete().then(() => {
-      setOpenToast({ open: true, message: "You successfully unregistered for this basketball session.", kind: 'success'});
+      setOpenToast({ open: true, message: "You successfully unregistered for this session.", kind: 'success'});
       setRefresh(!refresh);
     }).catch((error => {
       setOpenToast({ open: true, message: "Something went wrong. Please try again or contact admin.", kind: 'error'});
