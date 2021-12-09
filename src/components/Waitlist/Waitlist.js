@@ -49,6 +49,7 @@ function Report() {
           <Table.ColumnDefinition header="Phone Number" cell="phoneNumber" />
           <Table.ColumnDefinition header="Email Address" cell="email" />
           <Table.ColumnDefinition header="Role" cell="role" />
+          <Table.ColumnDefinition header="Timestamp" cell="timestamp" />
           <Table.ColumnDefinition header="Register player" cell={props => {
           return (
             <Button kind="primary" onClick={() => unWaitList(props.row)}>Register player</Button>

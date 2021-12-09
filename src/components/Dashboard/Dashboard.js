@@ -28,7 +28,7 @@ import './Dashboard.css';
 
 const { Label, Content } = Fieldset;
 
-const MAX_PEOPLE = 21;
+const MAX_PEOPLE = 18;
 
 const db = firebase.firestore();
 const batch = db.batch();
@@ -168,6 +168,7 @@ const Dashboard = () => {
           checkedIn: false,
           isRegistered: true,
           onWaitList: true,
+          timestamp: Date().toLocaleString(),
         })
         .then(() => {
             setIsLoading(false);
@@ -279,7 +280,7 @@ const Dashboard = () => {
           ) : (
             <>
               <div style={{display: "flex", justifyContent: "center"}}>
-                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / ${MAX_PEOPLE}`} /></Heading>
+                <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 21`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
               <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this Sunday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. Note that volleyball now starts at 6pm until 8pm.<br /><br /></Toast>
