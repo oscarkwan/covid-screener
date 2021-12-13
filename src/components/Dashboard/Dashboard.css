@@ -5,6 +5,10 @@ ul {
   padding: 0;
 }
 
+.dashboard {
+  padding-bottom: 50px;
+}
+
 @media (max-width: 600px) {
   .dashboard .title {
     font-size: 26px;
@@ -20,13 +24,13 @@ ul {
     width: 100% !important;
   }
 
-  [data-pka-anchor='card'] {
+  [data-pka-anchor="card"] {
     width: 100% !important;
   }
 
   header {
     height: auto !important;
-    flex-wrap: wrap;    
+    flex-wrap: wrap;
     padding-bottom: 16px;
   }
 
@@ -38,21 +42,21 @@ ul {
     width: 25% !important;
   }
 
-  [data-pka-anchor='card.footer'] {
+  [data-pka-anchor="card.footer"] {
     justify-content: space-between;
     padding-right: 16px;
   }
 
-  [data-pka-anchor='counter'] {
+  [data-pka-anchor="counter"] {
     margin-top: 8px;
   }
 }
 
-[data-pka-anchor='popover.card'] {
+[data-pka-anchor="popover.card"] {
   font-size: 16px !important;
 }
 
-[data-pka-anchor='card.footer'] {
+[data-pka-anchor="card.footer"] {
   justify-content: space-between;
   padding-right: 16px;
 }
@@ -98,18 +102,18 @@ fieldset {
   letter-spacing: 0.2em !important;
 }
 
-[data-pka-anchor='counter'] {
+[data-pka-anchor="counter"] {
   padding-left: 8px !important;
   padding-top: 4px !important;
   padding-bottom: 4px !important;
   padding-right: 5px !important;
 }
 
-[data-pka-anchor='card'] {
+[data-pka-anchor="card"] {
   height: auto !important;
 }
 
-[data-pka-anchor='pill'] {
+[data-pka-anchor="pill"] {
   padding: 0 16px !important;
   margin-top: 8px !important;
 }
@@ -130,16 +134,16 @@ fieldset {
 }
 
 .register-trigger {
-  font-family: 'Arial';
+  font-family: "Arial";
   margin-right: 8px;
 }
 
-[data-pka-anchor='confirmation.confirm-button'] {
+[data-pka-anchor="confirmation.confirm-button"] {
   border-color: #42996d !important;
   background-color: #5db187 !important;
-  background-image: linear-gradient(#5db187,#42996d) !important;
+  background-image: linear-gradient(#5db187, #42996d) !important;
 }
 
-[data-pka-anchor='popover.card'] {
-  font-family: 'Arial';
+[data-pka-anchor="popover.card"] {
+  font-family: "Arial";
 }
