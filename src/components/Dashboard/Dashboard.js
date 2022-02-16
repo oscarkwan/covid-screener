@@ -102,7 +102,7 @@ const Dashboard = () => {
   }, []);
 
   if (!userFirebase) {
-    return <Redirect to="/login" />;
+    return <Redirect to="/" />;
   }
 
   function checkIn() {
