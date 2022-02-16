@@ -237,7 +237,7 @@ const Dashboard = () => {
         {currentUser && (
           <Heading className="current-user-name" level={2} displayLevel={5}>{currentUser.firstLastName}</Heading>
         )}
-        <Heading level={2} displayLevel={4}>Upcoming Sunday {getNextTuesdayReadable()} (6:00 - 8:00 pm)</Heading>
+        <Heading level={2} displayLevel={4}>Upcoming Sunday {getNextTuesdayReadable()} (6:00 - 9:00 pm)</Heading>
         <div>
           {currentUser?.role === 'Church member' && getNoWaitList() === 0 && (
             <Button className="register-modal" kind="primary" onClick={() => registerAllChurchMembers()}>Start new session</Button>
