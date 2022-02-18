@@ -283,7 +283,7 @@ const Dashboard = () => {
                 <Heading className="total-players" level={3} displayLevel={3}>Total players: <Counter size="large" quantity={`${getNoWaitList()} / 21`} /></Heading>
                 {/* <Heading className="total-players" level={3} displayLevel={3}>Reserved: <Counter size="large" quantity={4} /></Heading> */}
               </div>
-              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this Sunday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. Note that volleyball now starts at 6pm until 8pm.<br /><br /></Toast>
+              <Toast hasCloseButton={false}>Please <strong>register</strong> to save a spot for this Sunday. When you enter the gym, please <strong>check in</strong> and fill out the questionnaire. Note that volleyball now starts at 6pm until 9pm.<br /><br /></Toast>
               <ul>
                 {sortedEventUsers().map((user, idx) => {
                   if (user.onWaitList) {
